@@ -1,0 +1,51 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Format: 1.8
+Date: Fri, 01 May 2020 17:22:23 -0400
+Source: wifi-switcher
+Binary: wifi-switcher
+Architecture: source all
+Version: 2.0-1
+Distribution: unstable
+Urgency: high
+Maintainer: Oleg Shalaev <oleg@chalaev.com>
+Changed-By: Oleg Shalaev <oleg@chalaev.com>
+Description:
+ wifi-switcher - wifi-manager for icewm and pdmenu
+Changes:
+ wifi-switcher (2.0-1) unstable; urgency=high
+ .
+   * Fixed configuration problems (interface name was not determined in the previous version).
+ .
+   * Switched to modern systemd for service control.
+Checksums-Sha1:
+ 7552fef5ccf7b02bef06eaabdb58da017172708f 1417 wifi-switcher_2.0-1.dsc
+ 7147b1f10d56a3cfcc287cc7a3d7ba9d886a961a 1920964 wifi-switcher_2.0.orig.tar.xz
+ 69643f64c95650bbcf413c43ae9997e26b7cfbbf 16244 wifi-switcher_2.0-1.debian.tar.xz
+ a747538c7445b134a45506fa36af17c2e783e7a1 30992 wifi-switcher_2.0-1_all.deb
+ 2b0e4ce925bcde045b9078f7c9bb604f835f8fbf 5568 wifi-switcher_2.0-1_amd64.buildinfo
+Checksums-Sha256:
+ afdd1a7b5d9fddaf24f4eee6cb912932e51b60b1a5adce84bc5c7839761820e4 1417 wifi-switcher_2.0-1.dsc
+ e5cbe18b0eb8e900933c3ebd781f682a034e275b481274f30fb85db58f268afe 1920964 wifi-switcher_2.0.orig.tar.xz
+ ed7d8b68fec5c3491789974631f1b32c709860770e2ab622dc3f72f874085895 16244 wifi-switcher_2.0-1.debian.tar.xz
+ a71162ac448bd002ee967403fcc03957b63fda772d32c86197c3579bdf834e92 30992 wifi-switcher_2.0-1_all.deb
+ 43410668d10926b5fbfddc8d41d3faa97361a257345f8ddbba9c3f80dc2d01d8 5568 wifi-switcher_2.0-1_amd64.buildinfo
+Files:
+ 2908c9b255f73218b73eba962846a8d0 1417 net optional wifi-switcher_2.0-1.dsc
+ d3eaa6e07a4ba88c8c0eab9509360509 1920964 net optional wifi-switcher_2.0.orig.tar.xz
+ 5136f2e79ca33b7d901e90bb737f94c8 16244 net optional wifi-switcher_2.0-1.debian.tar.xz
+ 2028f732a179ff784f5b59802950d305 30992 net optional wifi-switcher_2.0-1_all.deb
+ 12de1b84393c97f746a77fe6ee102af0 5568 net optional wifi-switcher_2.0-1_amd64.buildinfo
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFFBAEBCgAvFiEEoIJCs/PBjJa4KELjrYIftwl+NN8FAl6smDQRHG9sZWdAY2hh
+bGFldi5jb20ACgkQrYIftwl+NN9SvQf/XgHmkoZ4IriB1WQbOkSLxsisBFEpgGQ3
+DTHVN87cpf2BAkDJV1rx55jHmJm7oeAOPpiKsFV5xHPTaUhLz4fZ08BEFi7jpA9H
+DsQEH9zdvw4+OZJJrIoH+su4LV4zoxtQnBM+v+F1G32rNyjKSNEMK9CjCesHeNd4
+Erw2BLUjU4hj4zpqoirGOjpNLX7hO711wZibLFP92WW2rksXjytBmrtiPsMkpVCm
+QwLl7kSgsF/+6wMvyt7KEEE/xKGzjohlSo0+UsMAHwMjS7dvOMLvIb63r+VM2aAc
+fukyhTYZIArAKFYXsDXH4Y2ffqw0t9p6ZRQgfEX2e1OqlEjjzUQMTQ==
+=KDxp
+-----END PGP SIGNATURE-----

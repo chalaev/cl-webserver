@@ -1,0 +1,56 @@
+# Time-stamp: <2015/01/02 17:35:18 EST by Oleg SHALAEV http://chalaev.com >
+# yet UNTESTED
+# to be fixed: the following problem does not allow java to run properly:
+# apparmor="DENIED" operation="file_mmap" parent=2947 profile="/usr/lib/iceweasel/plugin-container" name="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/IcedTeaPlugin.so" pid=3673 comm="plugin-containe" requested_mask="m" denied_mask="m" fsuid=1000 ouid=0
+
+
+#include <tunables/global>
+
+# Version 05 for version  31.4.0 of iceweasel (firefox).
+
+# This file controls plugins such as Flash Player.
+# If I were writing viruses for firefox, I would act through plugins.
+# This is why this file must be as restrictive as possible!
+
+/usr/lib/iceweasel/plugin-container {
+  #include <abstractions/audio>
+  #include <abstractions/base>
+  #include <abstractions/consoles>
+  #include <abstractions/ubuntu-konsole>
+
+  capability sys_ptrace,
+
+  /bin/dash rix,
+  /bin/grep rix,
+  /bin/ps rix,
+/usr/bin/flash-player-properties ix,
+  /etc/nsswitch.conf r,
+deny /etc/group r,
+deny /etc/passwd r,
+  /etc/vdpau_wrapper.cfg r,
+deny  @{HOME}/.Xauthority r,
+  @{HOME}/.adobe/Flash_Player/** rw,
+  @{HOME}/.fonts.conf r,
+# added the following 3 lines 2015/01/02:
+  @{HOME}/.macromedia/ rw,
+  @{HOME}/.macromedia/** rw,
+#  so now we do not need this line any more: @{HOME}/.macromedia/Flash_Player/** rw,
+@{HOME}/.adobe/ rw,
+@{HOME}/.adobe/** rw,
+  @{HOME}/.mozilla/firefox/*.default/* r,
+  @{HOME}/.mozilla/firefox/profiles.ini r,
+  /proc/ r,
+  /proc/sys/kernel/pid_max r,
+  /proc/tty/drivers r,
+deny  /proc/uptime r,
+  owner /tmp/** rlk,
+  /tmp/** w,
+  /usr/lib/iceweasel/plugin-container mr,
+  /usr/lib/x86_64-linux-gnu/pango/*/modules/* mr,
+# This line perhaps should be generalized to work
+# on 32-bit systems and
+# for different java implementations
+  /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/IcedTeaPlugin.so mr,
+  /usr/share/themes/Raleigh/gtk-2.0/gtkrc r,
+
+}

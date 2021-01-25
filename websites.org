@@ -1,0 +1,68 @@
+#+TITLE: defines websites or paths
+#+AUTHOR: Oleg Shalaev
+#+EMAIL:  oleg@chalaev.com
+
+Let me test [[https://edicl.github.io/hunchentoot][Hunchentoot]] on [[https://chalaev.com/][my old personal website]] which
+- should be rewritten anyway and
+- not that essential.
+
+#+BEGIN_SRC lisp :tangle generated/files.lisp
+(defun log-WSF (log-type &rest message)
+  (apply #'SL:log 
+    (cons log-type (cons (concatenate 'string "WSF " (car message)) (cdr message)))))
+#+END_SRC
+
+* Showing directories and serving static files
+In this section let me share some files (HTMLs, JSs, CSSs, PDFs and pictures).
+
+← this allows downloading files like http://localhost:50001/pub/readMe.txt
+or (password-protected) http://localhost:50001/test/tmp.txt
+but no directory listings like http://localhost:50001/pub/
+
+Next let me add private directory protected by basic HTTP authentication using
+slightly modified  ~create-folder-dispatcher-and-handler~ code.
+Here is my modification of the original ~create-folder-dispatcher-and-handler~ code:
+#+BEGIN_SRC lisp :tangle generated/files.lisp
+(defun folder-dispatcher(uri-prefix base-path &optional guard realm content-type callback)
+"serves static files when guard"
+(create-prefix-dispatcher uri-prefix
+  #'(lambda()
+(log-message* :debug "my dispatcher worked")
+(let ((req-path(request-pathname *request* uri-prefix)))
+(when (null req-path) (setf (return-code*) +http-forbidden+) (abort-req-handler))
+(when(or(null guard)
+(multiple-value-bind(uName pass) (authorization *request*)
+(if(funcall guard uName pass req-path) t
+   (if realm(require-authorization realm)(require-authorization)))))
+#+END_SRC
+← it is really strange that ~(ifn ...)~ does not work here
+leading to empty ~uName~ and ~pass~ resulting in endless loop asking for user credentials.
+#+BEGIN_SRC lisp :tangle generated/files.lisp
+(handle-static-file (merge-pathnames req-path base-path)
+                     content-type callback))))))
+#+END_SRC
+← for hidden files like http://localhost:50001/test/tmp.txt
+
+May be I should introduce (multi-threading) locks into the following block:
+#+BEGIN_SRC lisp :tangle generated/files.lisp
+(defvar *dispatchers* '());  "local dispatchers"
+(defun dispatchers() *dispatchers*)
+(defun my-guard(user-name pass &optional path)
+"checks user name and password; might be path-dependent"
+ (and user-name pass (string= user-name "oleg") (string= pass (format nil "shalaev~d" (nth-value 2 (decode-universal-time (get-universal-time)))))))
+#+END_SRC
+← dynamic password that I have no idea how to implement in =nginx=.
+Given some people's paranoia about cookies, dynamic passwords represent an alternative way of identifying the user.
+
+#+BEGIN_SRC lisp :tangle generated/files.lisp
+(defun start()
+;;  (push (create-folder-dispatcher-and-handler "/pub/" "/srv/www/chalaev.com/pub/") *dispatchers*) ; ←  standard (also works)
+  (push (folder-dispatcher "/" "/srv/www/chalaev.com/") *dispatchers*); unprotected because no login/password checker supplied
+  (push (folder-dispatcher "/test/" "/srv/www/chalaev.com/test/" #'my-guard "Oleg's website") *dispatchers*)); ← basic authentication
+(defun stop()
+  (log-WSF SL:info "removing ~d dispatchers in :web-server/files" (length *dispatchers*))
+  (setf *dispatchers* nil))
+(defun restart()
+(stop) (start))
+#+END_SRC
+← these blocks allow changing the dispatchers locally, without restarting the entire server.

@@ -1,0 +1,46 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Format: 1.8
+Date: Wed, 07 Dec 2016 17:32:55 -0400
+Source: wifi-switcher
+Binary: wifi-switcher
+Architecture: source all
+Version: 1.0-2
+Distribution: unstable
+Urgency: low
+Maintainer: Oleg Shalaev <chalaev@gmail.com>
+Changed-By: Oleg Shalaev <chalaev@gmail.com>
+Description:
+ wifi-switcher - wifi-manager for icewm and pdmenu
+Changes:
+ wifi-switcher (1.0-2) unstable; urgency=low
+ .
+   * Fixed some of lintian complaints.
+Checksums-Sha1:
+ c4fd565248dd736c6edd0499c76c40d503c4da36 1412 wifi-switcher_1.0-2.dsc
+ e149e0069e9ec793867fa9f200dca2f017f8e865 9896 wifi-switcher_1.0-2.debian.tar.xz
+ b415a380065e7c82d7eb08d3d7dac0c6e37823ff 30156 wifi-switcher_1.0-2_all.deb
+ 4dfb0b92ff6d3e0dc4247eda11b6ab716b0a3c42 4618 wifi-switcher_1.0-2_amd64.buildinfo
+Checksums-Sha256:
+ f6e0d341ee5e27023f38ba33390be6202787c8252ad7c76e13d87028e19c253e 1412 wifi-switcher_1.0-2.dsc
+ 1ca08c0b1e3bf4538a7b918df59060c5db4302637e3ba27a78c2d80a468444c3 9896 wifi-switcher_1.0-2.debian.tar.xz
+ 05363a0781c31e92214b766f1f50b4d00e4f257388f7e2ce464801b6aa8984a8 30156 wifi-switcher_1.0-2_all.deb
+ f5b53b6b6f409832f561f4fd3b9bbc83f2c652455b354a5642ef335b8d2a1cb7 4618 wifi-switcher_1.0-2_amd64.buildinfo
+Files:
+ 97ef2fbe9eb2eba3de2383ecd7e5e9c3 1412 net optional wifi-switcher_1.0-2.dsc
+ f65a32ea33d2cbe0bb252c75df76ba2b 9896 net optional wifi-switcher_1.0-2.debian.tar.xz
+ 3aa0e52bd13a2d818d1581a715fe45dc 30156 net optional wifi-switcher_1.0-2_all.deb
+ 52285334b6c38825a93a9181cbca82fd 4618 net optional wifi-switcher_1.0-2_amd64.buildinfo
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFGBAEBCAAwFiEEUyfbH962Z6ofAPDG0SRRqvGDptgFAlhIjzMSHGNoYWxhZXZA
+Z21haWwuY29tAAoJENEkUarxg6bYdxwH/Rs0s6je7lIkyIHMx48Q8oS1F4Q974b8
+TsOPAodwhHlMyu1aS7eEXSO/ph3XksTPxOLuAc4zUsxEh0Q2mkxPjmLKiA35BBXB
+5U+1cMo272QD5wCViDwGBCzSKUIUZciMCktQqaBLUdc9wALJvwv58APDCNyRwIim
+b2FWHmcJl7gYaFPrHwYcjdIe5keb5xAZSpt5+sF1RfZgUXzgczEMICy62n+GIH0B
+jHMTAMlB3PoQM5JbPMzb5Cq59t9jvIx7vzCfBssNrTwqRL5FZfbiN8fFL6MDlFTE
+3EYfX2lrYDaok4aTBorxjwl+ifhEFsK35K+zjGCaHyeXltH/goQeVGE=
+=WdSr
+-----END PGP SIGNATURE-----

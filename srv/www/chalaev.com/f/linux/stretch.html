@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="geo.region" content="US-NY" />
+<meta name="geo.placename" content="Rochester" />
+    <meta name="geo.position" content="43.08605, -77.54528" />
+    <meta name="ICBM" content="43.08605, -77.54528" />
+<meta charset="UTF-8">
+<meta name="author" content="Oleg Shalaev">
+<meta name="description" content="linux install how-to">
+<meta name="keywords" content="linux,debian,stretch,stretch,debootstrap">
+<link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon" />
+<link type="text/css" rel="stylesheet" href="../../../../shalaev.css"> </link>
+<link rel="stylesheet" href="../../js-lib/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="../../feedback.css"/>
+<title>Installing Debian Stretch on 64 bit systems using debootstrap</title>
+</head>
+
+<body>
+
+<div id="nav"><a href="/linux">main page</a></div>
+    <script src="../../contents2.js"></script>
+    
+    <script>
+      if ("https:" == window.location.protocol) {
+	window.location.assign(window.location.href.replace("https:","http:"));}
+      document.getElementById("nav").innerHTML = markActive("linux");
+    </script>
+
+    <div id="FBtab" class="FBtab_right" tabindex="0" data-toggle="modal" data-target="#fbBox">
+	<div>	<span></span>      </div>
+	<div class="screen_reader">your feedback</div>
+    </div>
+    
+    <div class="modal fade" id="fbBox" role="dialog"> </div>
+
+    <div class="container-fluid" id="content">
+
+<p><ul id="itemize">Changes with respect to the <a href="jessie.html" >previous version</a>:
+  <li>I gave up using skype with linux (bought an android device for that instead).</li>
+  <li>No more 32-bit systems, switched to 64-bit.</li>
+  <li>Stopped using btrfs, will try ext4 and good-old reiserfs+lvm instead.</li>
+  <li style="margin-bottom:-10px;">The standard linux kernel is growing too fat. Manual recompilation seems a good idea again (in ancient times I had to compile kernel to achieve software compatibility).</li>
+</ul>
+</p>
+
+<h2>Installing Debian stretch on 64 bit systems using debootstrap</h2>
+<p>With linux I prefer budding reproduction way. Namely, when I want to install debian on a new computer, first I
+create debian system on a flash drive (under debian or ubuntu), boot from this flash drive on a new computer, and
+create debian system on a hard drive in the same way.
+The system installed according to this method will take approximately 2Gb; I would use at least a 3Gb usb stick (or an SDHC card).</p>
+
+<h3>Formatting and debootstraping</h3>
+I insert a usb stick or a SDHC card into computer with a working linux (Debian or Ubuntu) system.
+I assume that the corresponding device is <code>/dev/sdb</code> and my non-root user name is <code>shalaev</code>; I am going to install debian on
+the first partition (/dev/sdb1 in my case):<br>
+  <pre>export diskDev=sdb</pre>
+</p>
+
+<p>Sometimes it happens that partition table on the usb stick is broken
+(e.g., after you copied debian netinst image to the stick);
+in this case we have to clean the beginning of the stick and recreate the partition table:<br>
+<pre>export LANG=C
+dd if=/dev/zero of=/dev/${diskDev} bs=1024 count=100
+/sbin/install-mbr --force /dev/${diskDev}
+export userName=shalaev</pre>
+</p>
+
+<p>Now we should create at least one partition:
+  <pre>fdisk -H 224 -S 56 /dev/${diskDev}</pre>
+</p>
+
+<p>
+  <pre>mkfs.ext4 -F /dev/${diskDev}1
+mount /dev/${diskDev}1 /mnt/aaa
+mkdir -p /mnt/aaa/mnt/{aaa,usb,tmp}
+time debootstrap stretch /mnt/aaa <a href="http://mirror.cc.columbia.edu/debian">http://mirror.cc.columbia.edu/debian</a></pre>
+On large hard disks instead of <code>fdisk</code> you may have to use <code>gparted</code>; I also use <code>lvm</code> together with <code>resize_reiserfs</code>
+which allow me easy partition resizing.</p>
+
+<p>
+  <div class="org-src-container">
+  <pre>cp /etc/network/interfaces /mnt/aaa/etc/network/interfaces
+cp /etc/hosts /mnt/aaa/etc/hosts
+echo "deb <a href="http://ftp.us.debian.org/debian/">ftp://ftp.us.debian.org/debian/</a> stretch main contrib non-free" &gt; /mnt/aaa/etc/apt/sources.list
+echo "deb <a href="http://security.debian.org/">http://security.debian.org/</a> stretch/updates main contrib" &gt;&gt; /mnt/aaa/etc/apt/sources.list
+for i in sys proc dev ; do mount --bind /$i /mnt/aaa/$i ; done
+mount --bind /dev/pts /mnt/aaa/dev/pts
+chroot /mnt/aaa /bin/bash
+apt-get update
+time apt-get --no-install-recommends -y install aptitude
+time tasksel --new-install install laptop</pre>
+</p>
+
+<h3>Installing software</h3>
+<p><div class="org-src-container">
+<pre>time aptitude -R -y install dbus-x11 file localepurge grub2 \
+os-prober gparted bzip2 iotop icewm-experimental apt-file debootstrap net-tools \
+lvm2 openssh-client x11-utils psmisc passwd nano xserver-xorg strace rsync \
+xfonts-base rxvt-unicode busybox-static rfkill wireless-tools net-tools pciutils \
+acpi acpid firmware-linux iceweasel iceweasel-l10n-ru smartmontools \
+ifplugd dosfstools shorewall openssh-server ntpdate ecryptfs-utils \
+apparmor apparmor-notify apparmor-utils mingetty parted reiserfsprogs \
+gnome-backgrounds mutt fetchmail procmail exim4 heirloom-mailx xorg \
+x11-xserver-utils emacs auctex vorbis-tools vorbisgain sox whois \
+sleepd alsa-tools alsa-utils configure-debian aspell-en w3m \
+aspell-ru linux-image-amd64 mbr cryptsetup-bin man-db lsof</pre>
+– note that for certain laptops you have to add some extra firmware packages in this list, e.g., firmware-realtek or firmware-brcm80211.</p>
+
+<p>During the installation of grub, we have to select the device to install the boot loader;
+we choose  <code>/dev/${diskDev}</code> which is <code>/dev/sdb</code> in my case.
+There will also be questions regarding locales relevant for people who speak languages other than English.
+</p>
+
+<h3>Basic security: apparmor, chroot jail, and shorewall</h3>
+<p>It is a good idea to protect your new linux system before it boots for the very first time.
+Perhaps the most obvious way to massively infect computers is to convince their users to open either a malicious web page or an infected document. So the most
+dangerous applications are (i) web browsers and (ii) pdf-viewers (and OpenOffice in case if you work with <code>.doc</code> files).
+This is why you may want to protect your newly born linux system using <a href="http://wiki.apparmor.net/index.php/Main_Page" >apparmor</a>
+and some of my <a href="../../../pub/etc/apparmor.d/">apparmor profiles</a>:
+<pre>
+wget -O /etc/apparmor.d/usr.lib.iceweasel.iceweasel <a href="../../../pub/etc/apparmor.d/usr.lib.iceweasel.iceweasel/05">http://chalaev.com/pub/etc/apparmor.d/usr.lib.iceweasel.iceweasel/05</a>
+wget -O /etc/apparmor.d/usr.lib.iceweasel.plugin-container <a href="../../../pub/etc/apparmor.d/usr.lib.iceweasel.plugin-container/04">http://chalaev.com/pub/etc/apparmor.d/usr.lib.iceweasel.plugin-container/04</a></pre>
+In particular, my profiles do not allow iceweasel (firefox) reading user files outside of <code>~/Downloads</code> directory.
+Once you activate apparmor, in system log you will see
+some strange requests (for example, unjustified attempts to read <code>/etc/passwd</code>) which have been denied.</p>
+
+<p>Also we need a firewall. (Do not rely on your system adminstrators' firewall which separates your company from the rest of the world;
+anyway you have to protect yourself from an infected windows system working in the office next door.)
+    I use <a href="http://www.shorewall.net" >shorewall</a> and you can copy my configuration as follows</p>
+<pre>
+for i in interfaces  masq  policy  rules  zones; do wget -O /etc/shorewall/$i <a href="../../../pub/etc/shorewall/">http://chalaev.com/pub/etc/shorewall/</a>$i; done
+sed -i 's/^startup=0/startup=1/' /etc/default/shorewall</pre>
+<p>Do not forget to change interface names in <code>/etc/shorewall/interfaces</code> to yours; see the output of
+    <code>ip addr ls</code> command.</p>
+<p>Take a look on the configuration files in <code>/etc/shorewall/</code> before activating the firewall.
+Note that <a href="http://www.shorewall.net" >shorewall</a> can also be easily configured for sharing internet connection (for example, when you connect your
+laptop to a wired network and want to provide your own wifi hotspot to share connection, say for a smartphone);
+in this case, apart from editing <code>/etc/shorewall/masq</code>  you will also have to allow NAT in <code>/etc/shorewall/shorewall.conf</code>:
+<pre>
+sed -i "s/^IP_FORWARDING=Keep/IP_FORWARDING=Yes/" /etc/shorewall/shorewall.conf</pre>
+  </p>
+
+<p>Finally, it is important to protect my ssh-server from bad people who might know or guess my not too-sophisticated user password:
+<pre>
+sed -i "s/^.*PasswordAuthentication yes/PasswordAuthentication no/" /etc/ssh/sshd_config
+chmod o-r /etc/ssh/sshd_config</pre>
+– after that no one can log in to my server using passwords; only cryptographic keys are allowed.</p>
+
+<h3>System-wide configuring</h3>
+<p><pre>
+did=$(ls /dev/disk/by-uuid/ -lah | grep ${diskDev}1 | awk '{print $9}')</pre>
+<pre>
+echo -ne "
+proc\t/proc\tproc\tdefaults\t0\t0
+UUID=$did\t/\tauto\tdefaults\t0\t1
+tmpfs\t/var/log\ttmpfs\tdefaults\t0\t0
+" &gt; /etc/fstab</pre>
+– in addition you may want to add swap entry to the <code>/etc/fstab</code> file.</p>
+
+<p>
+<pre>
+sed -i -e 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/' \
+-e 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="apparmor=1 security=apparmor /' /etc/default/grub
+update-grub</pre>
+
+<pre>
+apt-get clean
+passwd</pre>
+
+<pre>
+dpkg-reconfigure locales</pre>
+
+<pre>
+hostname usblive
+adduser ${userName}
+for i in anacron fuse ; do groupadd $i ; done
+for i in input audio video adm src users anacron crontab fuse netdev ; do adduser ${userName} $i ; done</pre>
+where the first three groups (input audio video) are the most important ones
+(I found out that a user who is not a member of the input group can not use graphic mode).</p>
+
+<p>Next, I set up automatic log in and launch  <code>startx</code> after every reboot:
+<pre>
+cp -i /etc/systemd/system/getty.target.wants/getty@tty1.service /etc/systemd/system/getty.target.wants/getty@tty2.service
+sed -i "s/^ExecStart=-\\/sbin\\/agetty --noclear %I \$TERM/ExecStart=-\\/sbin\\/agetty \
+    -a shalaev --noclear %I \$TERM/" /etc/systemd/system/getty.target.wants/getty@tty1.service
+sed -i "s/^ExecStart=-\\/sbin\\/agetty --noclear %I \$TERM/ExecStart=-\\/sbin\\/agetty \
+   -a root --noclear %I \$TERM/" /etc/systemd/system/getty.target.wants/getty@tty2.service</pre>
+My <a href="../../../pub/skel/.profile"><code>~/.profile</code></a>
+runs <code>startx</code> at the very end, so the system brings me to the graphic mode automatically.</p>
+
+<p>Finally I
+<pre>apt-file update
+update-alternatives --set x-terminal-emulator /usr/bin/urxvt
+service dbus stop
+service acpid stop
+service exim4 stop
+exit
+hostname $(cat /etc/hostname)
+umount /mnt/aaa/dev/pts
+for i in sys proc dev ; do umount /mnt/aaa/$i ; done
+umount /mnt/aaa</pre>
+</p>
+
+<h3>Fine tuning: keyboard, wifi, icewm, etc</h3>
+<p>Continuing to work with root privileges. To be able to write in Cyrillic:
+<pre>
+wget -O  /etc/default/keyboard <a href="../../../pub/etc/default/keyboard">http://chalaev.com/pub/etc/default/keyboard</a></pre>
+  </p>
+
+<h4>Other stuff:</h4>
+<p>After I reboot under the newly created system, I set up the keyboard model:<br>
+<pre>dpkg-reconfigure keyboard-configuration</pre>
+– will prompt for your keyboard model; I choose the most standard keyboard (otherwise my keyboard does not work in graphics mode).</p>
+
+<p>Next, I log in as as a non-root user.
+I do not need all those bells and whistles of neither kde nor gnome and use lightweight icewm instead.
+To install my icewm configuration files:<br>
+<pre>mkdir ~/.icewm
+for i in menu  preferences  prefoverride startup theme toolbar; do wget -O ~/.icewm/$i <a href="../../../pub/skel/.icewm/">http://chalaev.com/pub/skel/.icewm/</a>$i; done</pre>
+Finally I install my basic configuration files:
+<pre>for i in xsession profile bashrc emacs procmailrc ; do wget -O ~/.$i <a href="../../../pub/skel/">http://chalaev.com/pub/skel/</a>.$i; done
+chmod u+x ~/.xsession ~/.profile ~/.bashrc
+touch ~/diary</pre></p>
+
+<p>I use <a href="https://packages.debian.org/sid/sleepd" >sleepd</a> package to shutdown the laptop on low battery,
+see my <a href="../../pub/etc/default/sleepd" >/etc/default/sleepd</a> and <a href="../../pub/usr/local/bin/onLowBattery.sh" >/usr/local/bin/onLowBattery.sh</a> files.
+Sadly, <a href="https://packages.debian.org/sid/sleepd" >sleepd</a> does not monitor CPU temperature…
+</p>
+
+<h3>Conclusion</h3>
+<p>The boot time (on lenovo x100e laptop from flash drive) is 34 seconds to graphic mode, and this is in case when I boot the system from the (slow) usb-drive
+formatted with (slow on flashdrives) reiserfs. (With deactivated apparmor this time would be 18 seconds.)
+</p>
+
+<p style="text-align: right;">
+<a  href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fchalaev.com%2Flinux"><small>validate this page</small></a>
+</p>
+</div>
+
+<script type="text/javascript" src="../../js-lib/jquery.js"></script>
+<script type="text/javascript" src="../../js-lib/common.js"></script>
+<script type="text/javascript" src="../../feedback.js"> </script>
+</body>
+</html>

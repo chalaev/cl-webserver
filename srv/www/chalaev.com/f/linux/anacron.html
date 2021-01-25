@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="geo.region" content="US-NY" />
+    <meta name="geo.placename" content="Rochester" />
+    <meta name="geo.position" content="43.124937;-77.629888" />
+    <meta name="ICBM" content="43.124937, -77.629888" />
+    <meta charset="UTF-8">
+    <meta name="author" content="Oleg Shalaev">
+    <meta name="description" content="linux notes">
+    <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon" />
+    <meta name="keywords" content="linux,djvu">
+    <link type="text/css" rel="stylesheet" href="../../shalaev.css">
+<link rel="stylesheet" href="../../js-lib/bootstrap.css">
+<link rel="stylesheet" href="../../js-lib/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="../../feedback.css"/>
+<title>anacron for non-root</title>
+  </head>
+
+<body>
+      <div id="nav"><a href="/cv">main page</a></div>
+    <script src="../../contents2.js"></script>
+
+        <script>
+      if ("https:" == window.location.protocol) {
+	window.location.assign(window.location.href.replace("https:","http:"));}
+      document.getElementById("nav").innerHTML = markActive("linux");
+    </script>
+
+    <div id="FBtab" class="FBtab_right" tabindex="0" onclick="showFBform()">
+      <div>
+	<span></span>
+      </div>
+      <div class="screen_reader">Activate to launch comment card</div>
+    </div>
+
+  <div class="container-fluid" id="content">
+
+    <div class="form-group col-md-6" id="fbBox"></div>
+
+  <h3>anacron for non-root</h3>
+<p>  Normally <code>anacron</code> is launched by root to excecute system-wide task, e.g.
+<a href="../../pub/etc/backup2l.conf" class="label label-success">backup2l</a>
+</p>
+
+  <p>
+    Non-root users have access to <code>cron</code> but normally can not execute <code>anacron</code>, which seems somewhat
+  unreasonable.  Suppose you want to allow user  <code>shalaev</code> to run his personal anacron tasks.
+  Type the following under root account:  </p>
+  <pre>groupadd anacron
+adduser shalaev anacron
+mkdir /var/spool/shalaev-anacron
+chgrp anacron /var/spool/shalaev-anacron
+chmod g+rwx /var/spool/shalaev-anacron </pre>
+  <p>
+  Next, log in as <code>shalaev</code> and copy the following into <code>~/anacrontab</code> file  </p>
+
+  <pre>SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+# period  delay  job-identifier  command
+    1       5       shalaev.anacron.daily nice run-parts --report $HOME/anacron.daily</pre>
+  <p>
+  Create directory <code>~/anacron.daily</code> and populate it with files which you want to excecute daily.
+  Do not forget to  <code>chmod +x</code> and remember that program names in <code>~/anacron.daily</code>
+  must match certain (default) pattern to be excecuted by
+  <code>run-parts</code>, see its man page.
+  (For example, <code>~/anacron.daily/emacs.sh</code> and <code>~/anacron.daily/emacs~</code>
+  will not be launched, but <code>~/anacron.daily/emacs</code> will.)
+  </p>
+  <p>Finally we remember that (unlike <code>cron</code>) <code>anacron</code> is not a daemon so it has to be launched manually.
+    You may launch it from your <code>~/.profile</code>, for example.
+I run it using the following string in my <code>crontab</code>
+  </p>
+<pre>11 * * * * /usr/sbin/anacron -S /var/spool/shalaev-anacron -t $HOME/anacrontab</pre>  
+<p>which lauches <code>anacron</code> hourly. Of course, programs in <code>~/anacron.daily</code> we run only once a day.
+
+<p style="text-align: right;">
+<a  href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fchalaev.com%2Flinux"><small>validate this page</small></a>
+</p>
+  </div>
+<script type="text/javascript" src="../../js-lib/jquery.js"></script>
+<script type="text/javascript" src="../../js-lib/common.js"></script>
+<script type="text/javascript" src="../../feedback.js"> </script>
+</body>
+</html>

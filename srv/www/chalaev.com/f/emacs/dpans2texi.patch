@@ -1,0 +1,294 @@
+ -*-coding: utf-8;-*-
+Time-stamp: <2016-07-12 18:33 EDT by Oleg SHALAEV http://chalaev.com > 
+
+diff -ur a/dpans2texi.el b/dpans2texi.el
+--- a/dpans2texi.el	2016-06-15 10:10:58.000000000 -0400
++++ b/dpans2texi.el	2016-06-15 10:09:09.000000000 -0400
+@@ -1280,6 +1280,9 @@
+   (while (re-search-forward "}\\( *-- *\\)[^-]" nil t)
+     (replace-match "---" t t nil 1))
+   (dp-pm)
++  (while (re-search-forward "\\\\it " nil t)
++    (replace-match "@it{}"))
++  (dp-pm)
+   (while (search-forward "\\\"u" nil t)
+     (replace-match "\\uumlaut{}" t t))
+   (dp-pm)
+@@ -1594,7 +1597,7 @@
+ 	case-fold-search)
+     (dolist (file (directory-files default-directory nil "ansicl-?[0-9]*$"))
+       (with-temp-buffer
+-	(let ((coding-system-for-read 'latin-1))
++	(let ((coding-system-for-read 'utf-8)); was 'latin-1
+ 	  (insert-file-contents file))
+ 	(dp-pm)
+ 	(while (re-search-forward re nil t)
+diff -ur a/dpi.texi b/dpi.texi
+--- a/dpi.texi	2016-06-15 10:10:58.000000000 -0400
++++ b/dpi.texi	2016-06-15 10:43:58.000000000 -0400
+@@ -1,45 +1,44 @@
+-@c -*- Mode: Texinfo; coding: latin-1; -*-
++@c -*- Mode: Texinfo; coding: utf-8-unix; -*-
+ @ifinfo
+-@definfoenclose code,ˇ,˛
+ 
+ @macro metavar {arg}
+-´\arg\ª
++¬´\arg\¬ª
+ @end macro
+ 
+ @macro cubed {}
+-≥
++¬≥
+ @end macro
+ 
+ @macro result {}
+-@r{˝}
++@t{‚Üí}
+ @end macro
+ 
+ @macro OUT {}
+-÷
++‚ñ∑
+ @end macro
+ 
+ @macro EQ {}
+-’
++‚â°
+ @end macro
+ 
+ @macro CRLF {}
+-Ù
++‚Ü©
+ @end macro
+ 
+ @macro uumlaut {}
+-¸
++√º
+ @end macro
+ 
+ @macro down {arg}
+-@t{˚}\arg\
++@t{‚Üì}\arg\
+ @end macro
+ 
+ @macro prevplus {}
+-˙
++‚Å∫
+ @end macro
+ 
+ @macro begininterleave {}
+-˘
++„Äö
+ @end macro
+ 
+ @macro extrainterleave {}
+@@ -47,7 +46,7 @@
+ @end macro
+ 
+ @macro endinterleave {}
+-¯
++„Äõ
+ @end macro
+ 
+ @macro ssso {}
+@@ -67,91 +66,91 @@
+ @end macro
+ 
+ @macro neq {}
+-‚
++‚â†
+ @end macro
+ 
+ @macro in {}
+-˜
++‚àà
+ @end macro
+ 
+ @macro geq {}
+-ˆ
++‚â•
+ @end macro
+ 
+ @macro bigcup {}
+-ı
++‚ãÉ
+ @end macro
+ 
+ @macro leq {}
+-Û
++‚â§
+ @end macro
+ 
+ @macro langle {}
+-Ú
++‚å©
+ @end macro
+ 
+ @macro rangle {}
+-Ò
++‚å™
+ @end macro
+ 
+ @macro downarrow {}
+-
++‚Üì
+ @end macro
+ 
+ @macro Partial {}
+-Ô
++‚àÇ
+ @end macro
+ 
+ @macro pi {}
+-Ó
++œÄ
+ @end macro
+ 
+ @macro epsilon {}
+-Ì
++Œµ
+ @end macro
+ 
+ @macro alfa {}
+-Ï
++Œ±
+ @end macro
+ 
+ @macro cdot {}
+-Î
++¬∑
+ @end macro
+ 
+ @macro centerdot {}
+-@cdot{}
++¬∑
+ @end macro
+ 
+ @macro Stress {arg}
+-Í\arg\
++Àà\arg\
+ @end macro
+ 
+ @macro stress {arg}
+-È\arg\
++Àå\arg\
+ @end macro
+ 
+ @macro schwa {}
+-Ë
++…ô
+ @end macro
+ 
+ @macro harda {}
+-Á
++ƒÅ
+ @end macro
+ 
+ @macro harde {}
+-Ê
++ƒì
+ @end macro
+ 
+ @macro hardo {arg}
+-Â
++≈ç
+ @end macro
+ 
+ @macro maybeStress {arg}
+-‰\arg\
++Àê\arg\
+ @end macro
+ 
+ @macro one {arg}
+-\arg\π
++\arg\¬π
+ @end macro
+ 
+ @rmacro subs {arg}
+@@ -163,43 +162,43 @@
+ @end macro
+ 
+ @macro sub0 {}
+-ÿ
++‚ÇÄ
+ @end macro
+ 
+ @macro sub1 {}
+-·
++‚ÇÅ
+ @end macro
+ 
+ @macro sub2 {}
+-‡
++‚ÇÇ
+ @end macro
+ 
+ @macro sub3 {}
+-ﬂ
++‚ÇÉ
+ @end macro
+ 
+ @macro sub4 {}
+-ﬁ
++‚ÇÑ
+ @end macro
+ 
+ @macro sub5 {}
+-›
++‚ÇÖ
+ @end macro
+ 
+ @macro sub6 {}
+-‹
++‚ÇÜ
+ @end macro
+ 
+ @macro sub7 {}
+-€
++‚Çá
+ @end macro
+ 
+ @macro sub8 {}
+-⁄
++‚Çà
+ @end macro
+ 
+ @macro sub9 {}
+-Ÿ
++‚Çâ
+ @end macro
+ 
+ @macro subOne {}
+@@ -207,6 +206,6 @@
+ @end macro
+ 
+ @macro le {}
+-„
++‚â§
+ @end macro
+ @end ifinfo
+diff -ur a/dp.texi b/dp.texi
+--- a/dp.texi	2016-06-15 10:10:58.000000000 -0400
++++ b/dp.texi	2016-06-14 17:04:45.000000000 -0400
+@@ -14,7 +14,7 @@
+ @end macro
+ 
+ @macro subN {}
+-@sub1{n}
++_n
+ @end macro
+ 
+ @macro tild {}
+@@ -98,9 +98,9 @@
+ @macro Vtop {}
+ @end macro
+ 
+-@macro id {arg}
++@rmacro id {arg}
+ \arg\
+-@end macro
++@end rmacro
+ 
+ @macro dot {}
+ .

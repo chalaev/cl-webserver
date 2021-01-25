@@ -1,0 +1,28 @@
+# Author: Roman Yepishev <roman.yepishev@yandex.com>
+#include <tunables/global>
+
+/usr/bin/yandex-disk {
+    #include <abstractions/base>
+    #include <abstractions/nameservice>
+    #include <abstractions/user-tmp>
+
+    owner @{HOME}/.config/yandex-disk/ rw,
+    owner @{HOME}/.config/yandex-disk/** rw,
+
+# sync location
+  /home/backup/cloud/ rw,
+  /home/backup/cloud/** rw,
+
+# yandex-disk can add itself to autostart configuration
+#    owner @{HOME}/.config/autostart/Yandex.Disk.desktop rw,
+
+
+
+# or change the location like this:
+#   owner @{HOME}/OtherFolder/ rw,
+#   owner @{HOME}/OtherFolder/** rw,
+
+    /usr/bin/yandex-disk ixr,
+
+    /bin/dash ixr,
+}

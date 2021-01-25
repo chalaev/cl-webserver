@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="geo.region" content="US-NY" />
+    <meta name="geo.placename" content="Rochester" />
+    <meta name="geo.position" content="43.124937;-77.629888" />
+    <meta name="ICBM" content="43.124937, -77.629888" />
+    <meta charset="UTF-8">
+    <meta name="author" content="Oleg Shalaev"/>
+    <meta name="description" content="notes on linux"/>
+    <title>notes on linux</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="keywords" content="linux, lisp, emacs"/>
+    <link rel="stylesheet" href="common.css"/>
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+    <title>Oleg Shalaev|linux notes</title>
+  </head>
+  <body>
+    <div id="message" class="clear" style="background-color:rgba(0,0,0,.5)">You need to enable JavaScript to run this website.</div>
+    <script>
+     document.getElementById('message').style.display='none';
+     var localScripts=["chalaev.js"],thePage="/";
+    </script>
+    <script async src="1.js"></script>
+
+    <div id="header">
+      <div id="verhAni">
+	<div id="menu" class="header" style="padding:0;margin:0"></div>
+      </div>
+
+      <p>This website was shut down for several years. Now in 2020 I am slowly resurrecting it; expect missing files and other errors...</p>
+
+      <h3>Debian linux tips:</h3>
+      <p>
+	Asus EEE kernel configurations: <a href="https://github.com/chalaev/chalaev/tree/master/pub/kernel-config/EEE-netbook" class="conf-item">netbook</a>
+	<a href="https://github.com/chalaev/chalaev/tree/master/pub/kernel-config/EEE-Box" class="conf-item">nettop</a>
+      </p>
+      <p>
+	apparmor-profiles:
+	<a href="https://github.com/chalaev/chalaev/tree/master/pub/etc/apparmor.d/" class="conf-item">stretch</a>
+	<a href="https://github.com/chalaev/chalaev/tree/master/pub/debian/amd64/wheezy/etc/apparmor.d/" class="conf-item" >wheezy</a>
+      </p>
+      <p>Other tips:
+	<a href="f/linux/stretch" class="conf-item">install setup protect</a>
+	<a href="f/linux/djvu" class="conf-item">scan to djvu</a>
+	<a href="f/linux/anacron" class="conf-item">anacron</a>
+	<a href="https://github.com/chalaev/chalaev/tree/master/pub/etc/shorewall/" class="conf-item">firewall (shorewall)</a>
+	<a href="projects#wifi-switcher" class="conf-item">wifi-switcher</a>
+	<a href="pub/etc/backup2l.conf" class="conf-item">encrypted backup2l</a>
+      </p>
+
+      <p>
+	I do not rely on graphics mode (X window) when configuring linux, and none of these configuration tips requires graphics.
+	So they remain helpful even if graphics driver fails, or if you have to maintain remote linux system.
+	Except for the <a href="projects#wifi-switcher" >wifi-switcher</a>,
+	all software used here is available from the standard <a href="https://www.debian.org" >debian linux</a> repositories.
+      </p>
+
+      <h3>Hardware tips</h3>
+      <p>
+	<a href="https://www.fsf.org/givingguide/v7/">Harware buying/giving guide</a>
+      </p>
+      <h4>Good and compatible hardware</h4>
+      <p>Asus, Lenovo ThinkPad and ThinkCentre.</p>
+
+      <h4>HP printers/all-in-ones</h4>
+      <p>Buy them if someone else pays for ink and toner.</p>
+      <p>HP has good linux-compatibility, but it does its best in preventing people to save on ink and toner.</p>
+      <p>E.g., on HP Officejet 6700 Premium it is impossible to print even black and white text if yellow cartridge is empty.
+	And you can not manually refill the cartridge for a few bucks, because a HP installs a chip on its cartriges that makes them unusable once they are emptied for the first time.</p>
+      <p>It is possible to buy cheaper &quot;generic&quot; cartridges which pretend to be original HP ones, but I just do not want to play
+	these games; so I avoid buying HP.</p>
+
+      <h4>Bad or incompatible hardware</h4>
+      <p>Acer, Lenovo IdeaPad, Xerox.</p>
+
+      <p style="text-align:right">
+	<a href="mailto:oleg@chalaev.com">oleg@chalaev.com</a><br>
+	<a href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fchalaev.com%2Flinux"><small>validate this page</small></a>
+      </p>
+    </div>
+  </body>
+</html>

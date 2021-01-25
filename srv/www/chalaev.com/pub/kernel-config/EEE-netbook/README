@@ -1,0 +1,4 @@
+These are my kernel configurations for the 4.4.6 linux version.
+Efficiency is improved from d to n
+The last (n) version might be too restrictive (does not support enough hardware).
+I use m-version.

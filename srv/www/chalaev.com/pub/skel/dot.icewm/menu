@@ -1,0 +1,4 @@
+menuprogreload wifi - 0 /usr/bin/wifi-switcher -icewm scan --wifi-hotspot
+prog rxvt /usr/share/pixmaps/urxvt_16x16.xpm /usr/bin/rxvt-unicode -bg black -cr green -fg grey -C
+# -fn -*-terminus-*-r-*-*-*-*-*-*-*-*-*-u
+prog emacs /usr/share/icewm/icons/emacs_16x16.xpm /usr/bin/emacs

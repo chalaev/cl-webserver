@@ -1,0 +1,2 @@
+prog term /usr/share/pixmaps/urxvt_16x16.xpm /usr/bin/rxvt-unicode -bg black -cr green -fg grey -C -fn -*-terminus-*-r-*-*-*-*-*-*-*-100-*-u
+prog ff /usr/share/icons/hicolor/32x32/apps/firefox-esr.png /usr/bin/firefox

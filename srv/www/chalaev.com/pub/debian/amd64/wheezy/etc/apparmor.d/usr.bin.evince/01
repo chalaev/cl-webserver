@@ -1,0 +1,145 @@
+# Time-stamp: <2015/01/18 21:58:17 EST by Oleg SHALAEV http://chalaev.com >
+# Oleg's version 01
+# Significally restricted (modified) after original ubuntu version by
+# Kees Cook <kees@canonical.com>  and Jamie Strandboge <jamie@canonical.com>
+# Oleg's main idea: the original ubuntu profile is too liberal; I do not want to allow, for example, network access or reading system files.
+# Whenever I need some of those strange functions, I will modify this file.
+
+#include <tunables/global>
+
+/usr/bin/evince {
+  #include <abstractions/bash>
+  #include <abstractions/cups-client>
+  #include <abstractions/dbus>
+  #include <abstractions/dbus-session>
+  #include <abstractions/base>
+
+  /etc/nsswitch.conf      r,
+/usr/share/applications/evince.desktop r,
+/usr/share/evince/** r,
+/var/cache/fontconfig/** r,
+/usr/share/fonts/** r,
+/etc/fonts/** r,
+/usr/share/texmf/fonts/** r,
+/usr/share/glib-2.0/** r,
+/usr/share/mime/** r,
+owner /tmp/** rw,
+
+# Из файла abstractions/gnome:
+/etc/pango/*                    r,
+/usr/lib{,32,64}/pango/**       mr,
+/usr/lib/@{multiarch}/pango/**        mr,
+
+
+  /usr/bin/evince rmPx,
+  /usr/bin/evince-previewer Px,
+
+  # This is need for saving files in your home directory without an extension.
+  # Changing this to '@{HOME}/** r' makes it require an extension and more
+  # secure (but with 'rw', we still have abstractions/private-files-strict in
+  # effect).
+  owner @{HOME}/** rw,
+  owner /media/**  rw,
+  owner @{HOME}/.local/share/gvfs-metadata/** l,
+  owner /{,var/}run/user/*/gvfs-metadata/** l,
+
+  owner @{HOME}/.config/evince/   rw,
+  owner @{HOME}/.config/evince/** rwkl,
+
+  owner @{HOME}/.gnome2/evince/*       rwl,
+#  owner @{HOME}/.gnome2/accels/        rw,
+#  owner @{HOME}/.gnome2/accelsevince   rw,
+#  owner @{HOME}/.gnome2/accels/evince  rw,
+
+  # Maybe add to an abstraction?
+  /etc/dconf/**                                       r,
+  owner @{HOME}/.cache/dconf/user                     rw,
+  owner @{HOME}/.config/dconf/user                    r,
+  owner /{,var/}run/user/*/dconf/                     w,
+  owner /{,var/}run/user/*/dconf/user                 rw,
+  owner /{,var/}run/user/*/dconf-service/keyfile/     w,
+  owner /{,var/}run/user/*/dconf-service/keyfile/user rw,
+
+  owner /{,var/}run/user/*/at-spi2-*/   rw,
+  owner /{,var/}run/user/*/at-spi2-*/** rw,
+
+  # from http://live.gnome.org/Evince/SupportedDocumentFormats. Allow
+  # read and write for all supported file formats
+  /**.[bB][mM][pP]     rw,
+  /**.[dD][jJ][vV][uU] rw,
+  /**.[dD][vV][iI]     rw,
+  /**.[gG][iI][fF]     rw,
+  /**.[jJ][pP][gG]     rw,
+  /**.[jJ][pP][eE][gG] rw,
+  /**.[oO][dD][pP]     rw,
+  /**.[fFpP][dD][fF]   rw,
+  /**.[pP][nN][mM]     rw,
+  /**.[pP][nN][gG]     rw,
+  /**.[pP][sS]         rw,
+  /**.[eE][pP][sS]     rw,
+  /**.[tT][iI][fF]     rw,
+  /**.[tT][iI][fF][fF] rw,
+  /**.[xX][pP][mM]     rw,
+  /**.[gG][zZ]         rw,
+  /**.[bB][zZ]2        rw,
+  /**.[cC][bB][rRzZ7]  rw,
+  /**.[xX][zZ]         rw,
+
+  # evince creates a temporary stream file like '.goutputstream-XXXXXX' in the
+  # directory a file is saved. This allows that behavior.
+  owner /**/.goutputstream-* w,
+}
+
+/usr/bin/evince-previewer {
+  #include <abstractions/bash>
+  #include <abstractions/cups-client>
+  #include <abstractions/dbus-session>
+#  #include <abstractions/ibus>
+
+  # Terminals for using console applications. These abstractions should ideally
+  # have 'ix' to restrict access to what only evince is allowed to do
+  #include <abstractions/ubuntu-gnome-terminal>
+
+  # By default, we won't support launching a terminal program in Xterm or
+  # KDE's konsole. It opens up too many unnecessary files for most users.
+  # People who need this functionality can uncomment the following:
+  ##include <abstractions/ubuntu-xterm>
+
+  /usr/bin/evince-previewer mr,
+  /usr/bin/yelp Cx -> sanitized_helper,
+  /usr/bin/bug-buddy px,
+
+  # Lenient, but remember we still have abstractions/private-files-strict in
+  # effect). Write is needed for 'print to file' from the previewer.
+  @{HOME}/ r,
+  @{HOME}/** rw,
+
+  # Maybe add to an abstraction?
+  owner /{,var/}run/user/*/dconf/          w,
+  owner /{,var/}run/user/*/dconf/user      rw,
+}
+
+/usr/bin/evince-thumbnailer {
+  #include <abstractions/dbus-session>
+
+  # The thumbnailer doesn't need access to everything in the nameservice
+  # abstraction. Allow reading of /etc/passwd and /etc/group, but suppress
+  # logging denial of nsswitch.conf.
+deny  /etc/passwd r,
+deny  /etc/group r,
+  deny /etc/nsswitch.conf r,
+
+  # TCP/UDP network access for NFS
+deny  network inet  stream,
+deny  network inet6 stream,
+deny  network inet  dgram,
+deny  network inet6 dgram,
+
+  /usr/bin/evince-thumbnailer mr,
+
+  # Lenient, but remember we still have abstractions/private-files-strict in
+  # effect).
+  @{HOME}/ r,
+  owner @{HOME}/** rw,
+  owner /media/**  rw,
+}

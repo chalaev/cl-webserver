@@ -1,0 +1,44 @@
+# Time-stamp: <last edited 2013/10/18 18:10:31 EDT by Oleg SHALAEV http://chalaev.com >
+# Created for okular version 4:4.8.4-3+b1
+# on Linux Debian 7.2 (wheezy), Intel(R) Core(TM)2 Quad  CPU   Q9450
+
+#include <tunables/global>
+
+/usr/bin/okular {
+  #include <abstractions/base>
+
+  deny /etc/fstab r,
+  deny /etc/nsswitch.conf r,
+  deny /etc/passwd r,
+  deny /etc/rpc r,
+  deny /etc/udev/udev.conf r,
+  deny /home/*/.Xauthority r,
+  deny /proc/** r,
+
+  /etc/fonts/** r,
+  /home/*/.config/Trolltech.conf rwk,
+  /home/*/.config/user-dirs.dirs r,
+  /home/*/.fontconfig/** r,
+  /home/*/.fonts.conf r,
+  /home/*/.kde/share/** rw,
+  /home/*/okular/* rw,
+  /tmp/ksocket-shalaev/** rw,
+  /usr/bin/okular mr,
+  /usr/lib{,32,64}/** mr,
+  /usr/share/fonts/** r,
+  /usr/share/icons/** r,
+  /usr/share/kde4/** r,
+  /usr/share/locale/ r,
+  /usr/share/mime/** r,
+  /usr/share/pkgconfig/shared-mime-info.pc r,
+  /usr/share/poppler/cMap/ r,
+  /usr/share/poppler/cidToUnicode/ r,
+  /usr/share/poppler/nameToUnicode/ r,
+  /usr/share/poppler/nameToUnicode/Bulgarian r,
+  /usr/share/poppler/nameToUnicode/Greek r,
+  /usr/share/poppler/nameToUnicode/Thai r,
+  /usr/share/poppler/unicodeMap/ r,
+  /var/cache/fontconfig/** r,
+  /var/tmp/kdecache-*/icon-cache.kcache rw,
+  /var/tmp/kdecache-*/ksycoca4 r,
+}

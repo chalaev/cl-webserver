@@ -1,0 +1,35 @@
+--- misc.old	2021-01-25 12:22:03.000000000 -0500
++++ misc.new	2021-01-25 12:25:12.000000000 -0500
+@@ -156,12 +156,17 @@
+ CALLBACK is run just before sending the file, and can be used
+ to set headers or check authorization;
+ arguments are the filename and the (guessed) content-type."
+-  (when (or (wild-pathname-p pathname)
+-            (not (fad:file-exists-p pathname))
+-            (fad:directory-exists-p pathname))
+-    ;; file does not exist
+-    (setf (return-code*) +http-not-found+)
+-    (abort-request-handler))
++(let((index.html (merge-pathnames pathname (make-pathname :name "index" :type "html"))))
++    (cond
++      ((and (fad:directory-exists-p pathname) (fad:file-exists-p index.html))
++       (handle-static-file index.html content-type callback))
++      ((null (pathname-type pathname))
++       (handle-static-file (make-pathname :directory (pathname-directory pathname) :name (pathname-name pathname) :type "html") content-type callback))
++      ((not (fad:file-exists-p pathname))
++       (log-message* :debug "file ~s does not exist" pathname)
++       (setf (return-code*) +http-not-found+)
++       (abort-request-handler))
++      (t
+   (unless content-type
+     (setf content-type (mime-type pathname)))
+   (let ((time (or (file-write-date pathname)
+@@ -190,7 +195,7 @@
+                (error "can't read from input file"))
+              (write-sequence buf out :end chunk-size)
+              (decf bytes-to-send chunk-size)))
+-        (finish-output out)))))
++        (finish-output out))))))))
+ 
+ (defun create-static-file-dispatcher-and-handler (uri path &optional content-type callback)
+   "Creates and returns a request dispatch function which will dispatch

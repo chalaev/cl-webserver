@@ -1,0 +1,42 @@
+# http://www.crunchbang.ru/topic1623.html
+
+#include <tunables/global>
+/usr/bin/cloud {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/gnome>
+  #include <abstractions/nameservice>
+  #include <abstractions/perl>
+
+
+  /bin/bash rix,
+  /bin/egrep rix,
+  /bin/grep rix,
+  /bin/sed rix,
+  /bin/uname rix,
+  /dev/tty rw,
+  /etc/pango/x86_64-pc-linux-gnu/pango.modules r,
+  /proc/meminfo r,
+  /usr/bin/dbus-send rix,
+  /usr/bin/mimeopen rix,
+  /usr/bin/which rix,
+  /usr/bin/xdg-mime rix,
+  /usr/bin/xdg-open rix,
+  /usr/bin/xprop rix,
+  /usr/lib64/firefox/firefox rix,
+  /usr/share/gtk-2.0/gtkrc r,
+
+  owner @{HOME}/.Mail* rw,
+  owner @{HOME}/.icons/** r,
+  owner @{HOME}/.local/share/applications/ r,
+#  owner @{HOME}/cloud/ rwk,
+#  owner @{HOME}/.Mail.Ru_Cloud rw,
+#  owner @{HOME}/.Mail.Ru_Cloud-** rwk,
+  /home/mail.ru-cloud/ rwk,
+  /home/mail.ru-cloud/* rwk,
+  /home/mail.ru-cloud/** rwk,
+  owner @{HOME}/.config/QtProject.conf* rwk,
+# I created ~/.config/Mail.Ru/ manually:
+  owner @{HOME}/.config/Mail.Ru/ rw,
+  owner @{HOME}/.config/Mail.Ru/** rwk,
+}

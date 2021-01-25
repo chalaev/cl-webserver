@@ -1,0 +1,117 @@
+#+TITLE: packaging
+#+AUTHOR: Oleg Shalaev
+#+EMAIL:  oleg@chalaev.com
+
+* Main package
+Web server includes several websites
+#+BEGIN_SRC lisp :tangle generated/web-server.asd
+(asdf:defsystem "web-server"
+  :class :package-inferred-system
+  :description "template web server"
+;;  :long-description #.(uiop:read-file-string (uiop/pathname:subpathname *load-pathname* "description.org"))
+  :author "Oleg Shalaev"
+  :mailto "oleg@chalaev.com"
+  :licence "MIT"
+  :version (:read-file-line "version.org")
+  :depends-on (:shalaev :hunchentoot :simple-log  :web-server/files :swank)
+;;  :in-order-to ((test-op (test-op "web-server/tests")))
+  :serial t
+  :components ((:file "web-server")) ; (:file "html")  for better html + css
+  :build-operation  "program-op"
+  :build-pathname "binary"
+  :entry-point "web-server:start")
+#+sb-core-compression
+(defmethod asdf:perform ((o asdf:image-op) (c asdf:system))
+  (uiop:dump-image (asdf:output-file o c) :executable t :compression t))
+#+END_SRC
+
+#+BEGIN_SRC lisp :tangle generated/headers/web-server.lisp
+(uiop:define-package :web-server
+  (:nicknames "WS")
+  (:export :stop :start)
+  (:use :cl :shalaev))
+(in-package :web-server)
+#+END_SRC
+← unfortunately =(:local-nicknames (:ht :hunchentoot))= leads to "unrecognized keyword" error ☹.
+
+* Files
+#+BEGIN_SRC lisp :tangle generated/web-server.asd
+(asdf:defsystem "web-server/files"
+    :class :package-inferred-system
+    :depends-on (:hunchentoot :simple-log :cl-fad)
+    :description "Simple web page serving static files"
+    :author "Oleg Shalaev"
+    :mailto "oleg@chalaev.com"
+    :licence "MIT"
+    :components ((:file "files")))
+#+END_SRC
+← needs a code for displaying a directory.
+
+#+BEGIN_SRC lisp :tangle generated/headers/files.lisp
+(defpackage :web-server/files
+  (:nicknames "WS/files")
+  (:use :cl :hunchentoot)
+  (:shadow :start :stop :restart)
+  (:export :start :stop :dispatchers))
+(in-package :web-server/files)
+#+END_SRC
+
+* Binary
+I would probably avoid compilation for non-mature code if I hosted my websites at my office, but this is not the case ☹,
+so I assume that the hosting company is controlled by the Forces of Darkness.
+
+Let us not provide our precious code to them by compiling it:
+#+BEGIN_SRC lisp
+ :tangle generated/web-server.asd
+(asdf:defsystem "web-server/binary"
+:class :package-inferred-system
+:depends-on (:shalaev)
+:build-operation  "program-op"
+:build-pathname "binary"
+:entry-point "web-server/binary:main"
+:description "a simple binary"
+:author "Oleg Shalaev"
+:mailto "oleg@chalaev.com"
+:licence "MIT"
+:version (:read-file-line "version.org")
+:components ((:file "binary")))
+(defpackage :web-server/binary
+  (:export :main)
+  (:use :cl :shalaev))
+#+END_SRC
+
+#+BEGIN_SRC lisp
+ :tangle generated/binary.lisp
+(defun main()
+  (setf simple-log:out-streams (list *standard-output*))
+#+END_SRC
+
+* Tests
+#+BEGIN_SRC lisp
+;; :tangle generated/web-server.asd
+(asdf:defsystem "web-server/tests"
+  :class :package-inferred-system
+  :description "testing"
+  :author "Oleg Shalaev"
+  :mailto "oleg@chalaev.com"
+  :licence "MIT"
+  :version (:read-file-line "version.org")
+  :depends-on ( :sb-rt)
+  :components ((:file "tests"))
+  :perform (test-op (o c)
+(flet ((run-tests (&rest args)
+         (apply (intern (string '#:run-tests) '#:web-server/tests) args)))
+  (run-tests :compiled nil)
+  (run-tests :compiled t))))
+(defpackage :web-server/tests
+  (:use :cl :shalaev/macros :sb-rt)
+  (:export :N-failed)
+  (:import-from :sb-rt :*compile-tests* :*expected-failures*))
+#+END_SRC
+
+#+BEGIN_SRC lisp
+;; :tangle generated/headers/tests.lisp
+(defvar N-failed 0 "how many tests failed")
+(defun run-tests (&key ((:compiled *compile-tests*)))
+  (unless (do-tests) (incf N-failed)))
+#+END_SRC

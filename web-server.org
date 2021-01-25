@@ -1,0 +1,186 @@
+#+TITLE:  common definitions for the web server
+#+AUTHOR: Oleg Shalaev
+#+EMAIL:  oleg@chalaev.com
+
+* Logging
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defun log-WS (log-type &rest message)
+  (apply #'SL:log 
+    (cons log-type (cons (concatenate 'string "WS " (car message)) (cdr message)))))
+#+END_SRC
+
+Actually =Hunchentoot= /has/ its [[https://edicl.github.io/hunchentoot/#cookie-max-age][own logging system]] which is "deliberately simple and slow"
+(see generic functions =ACCEPTOR-LOG-MESSAGE= =ACCEPTOR-LOG-ACCESS= and =ACCEPTOR-MESSAGE-LOG-DESTINATION=),
+so let us replace it with mine:
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defmethod acceptor-log-message ((acc tbnl:acceptor) log-type format-string &rest format-arguments)
+"log function for Hunchentoot"
+(let((LT(case log-type
+	  (:error sl:error)
+	  (:info sl:info)
+	  (:warning sl:warning)
+	  (otherwise sl:debug))))
+  (apply #'SL:log (cons LT (cons (concatenate 'string "WS " format-string) format-arguments)))))
+#+END_SRC
+← now ~(log-message* :info "1+1=~d" 2)~ will output log message using my logging system.
+
+* Dispatching
+An =acceptor= partially resembles a file in =/etc/nginx/sites-available/=: all requests arriving to specified IP address and port arrive to one acceptor.
+(So we would need several acceptors on a server with more than one IP address.)
+ 
+=Hunchentoot= has several functions for creating dispatchers; unless we want to disregard all this code,
+it makes sense to create a "dispatcher room" where several dispatchers can reside.
+
+=vhost= defined below is an =http= acceptor; I have to [[file:nginx.org][use nginx proxy]] to accepts =https= requests
+(necessary because I use basic authentication for [[https://chalaev.com/test/tmp.txt][test folder]]).
+I could probably replace ~tbnl:acceptor~ with ~tbnl:ssl-acceptor~ as follows:
+#+BEGIN_SRC lisp
+(defclass vhost (tbnl:ssl-acceptor)
+()
+(:default-initargs
+  :address "127.0.0.1"
+  :ssl-certificate-file "/etc/letsencrypt/live/chalaev.com/fullchain.pem"
+  :ssl-privatekey-file  "/etc/letsencrypt/live/chalaev.com/privkey.pem"
+  :document-root #p"/srv/www/chalaev.com/"
+  :error-template-directory #p"/srv/www/chalaev.com/errors/"))
+#+END_SRC
+← but then =chalaev.com= would be the only website that this acceptor could host, and
+I find this limitation unnecessary.
+
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defvar *dispatchers* '())
+(defclass vhost (tbnl:acceptor)
+()
+(:default-initargs
+  :address "127.0.0.1"
+  :document-root #p"/srv/www/chalaev.com/"
+  :error-template-directory #p"/srv/www/chalaev.com/errors/"))
+#+END_SRC
+
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defmethod dispatch-table((acceptor vhost))
+  (append *dispatchers* (web-server/files:dispatchers)))
+#+END_SRC
+where =dispatch-table= is our "dispatcher room".
+(Note that order of ~append~ arguments *matters* determining dispatchers' priority.)
+
+[ =vhost= is similar to (defined in =hunchentoot=) =easy-acceptor= class that also has its
+"dispatcher room" named ~*DISPATCH-TABLE*~, see [[https://edicl.github.io/hunchentoot/#easy-handlers][easy-handler framework]].]
+
+Next, we activate the "dispatcher room" by upgrading =acceptor-dispatch-request=:
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defmethod tbnl:acceptor-dispatch-request ((vhost vhost) request); called by (default)  HANDLE-REQUEST(acceptor) method. 
+#+END_SRC
+If we 
+1. do not want to use nginx as a proxy (make ~vhost~ listen to either 80 or 443 ports on the server instead),
+2. but not so sure about =hunchentoot= reliability,
+we might want to fool potential intruders by telling them that we do not use =hunchentoot=:
+#+BEGIN_SRC lisp
+(setf (tbnl:header-out :server) "nginx"); otherwise its gonna be "Hunchentoot"
+#+END_SRC
+←  However in my configuration this is useless since =:server= field will anyway be rewritten by =nginx=.
+
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+  (mapc #'(lambda(dispatcher); asking every dispatcher for a hndler until one of them provides it
+	    (when-let((handler(funcall dispatcher request))); Great! We've got a handler, so
+	      (return-from tbnl:acceptor-dispatch-request (funcall handler)))); let's lauch it
+	(dispatch-table vhost))
+(log-WS sl:debug "none of my dispatchers matched")
+  (call-next-method))
+#+END_SRC
+← the last command will launch standard =hunchentoot= dispatcher for static files.
+
+I had to slightly change several last lines of the default =acceptor-status-message= method to allow custom error messages e.g., =/srv/www/chalaev.com/errors/404.html=:
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defmethod tbnl:acceptor-status-message ((acceptor vhost) http-status-code &rest properties &key &allow-other-keys)
+  "Provides custom web pages on errors."
+  (labels ((file-contents(file-stream)
+         (let ((buf (make-string (file-length file-stream))))
+           (read-sequence buf file-stream)
+           buf)))
+(if(= 200 http-status-code) (call-next-method); otherwise we have error
+(let((FN (make-pathname
+                   :name (princ-to-string http-status-code)
+                   :type "html"
+                   :defaults (tbnl:acceptor-error-template-directory acceptor))))
+(ifn(probe-file FN) (call-next-method)
+(setf (tbnl:content-type*) "text/html")
+(with-open-file (file-stream FN :if-does-not-exist nil :element-type 'character)
+  (file-contents file-stream)))))))
+#+END_SRC
+
+We have only one IP address an thus only one acceptor =virtual-host=:
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defvar virtual-host nil)
+(defvar stop-the-server (bt:make-condition-variable))
+(defun stop()
+  (tbnl:stop virtual-host)
+  (bt:condition-notify stop-the-server))
+(defun start(&optional interactive)
+(setf virtual-host (make-instance 'vhost :port 50001))
+(unless *dispatchers*
+  (push (tbnl:create-regex-dispatcher "^/status$" 'status) *dispatchers*))
+  (web-server/files:start)
+  (tbnl:start virtual-host)
+  (swank:create-server)
+#+END_SRC
+← allows us to see/control in =emacs= [[Debugging][what's going on with the server]].
+
+Now let us create an endless loop
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(unless interactive
+(let((SL-lock (bt:make-lock)))
+  (bt:with-lock-held(SL-lock)
+     (sb-thread:condition-wait stop-the-server SL-lock)))))
+#+END_SRC
+that can be ended by =(stop)=
+
+* Status web page
+All other web pages (except for this one) are defined in separate (sub)packets.
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(defun status() "this web page is gonna show lots of useful information")
+#+END_SRC
+
+* Starting the server
+** Interactive session
+Use ~make~ to create a local package in local (user) =quicklisp= directory specified in [[file:Makefile][Makefile]]; then
+#+BEGIN_SRC lisp
+(ql:quickload :web-server)
+(in-package :web-server)
+(start t)
+#+END_SRC
+I use this approach for debugging on =localhost= before launching the binary on the server.
+
+** Launching binary (compiled code) on the server
+See [[file:packaging.org][packaging.org]] and [[file:Makefile][Makefile]]: when binary starts, it evaluates ~(start)~ with no arguments.
+
+* Debugging
+Thanks to ~(swank:create-server)~ command above, we can
+#+BEGIN_SRC shell
+ssh -L 4015:localhost:4005 -fN my-server.com
+#+END_SRC
+(you might want to update [[https://github.com/chalaev/cloud/blob/master/cloud.org][~/.ssh/config]] to improve connection reliability)
+and then connect to our remote session in =emacs=:
+#+BEGIN_SRC emacs
+M-x slime-connect
+localhost
+4015
+#+END_SRC
+Here is a real-life error that I have fixed "on the fly" using this approach.
+Initially my =web-server:stop= contained a mistake
+#+BEGIN_SRC 
+(defun stop()
+  (stop virtual-host)
+  (bt:condition-notify stop-the-server))
+#+END_SRC
+← namely, I forgot that I am not using =hunchentoot= in =web-server= package
+so instead of =(stop virtual-host)= I should have written =(tbnl:stop virtual-host)= here.
+
+In my local =emacs= slime-session connected to the remote swank-server I corrected this error by evaluating
+#+BEGIN_SRC lisp
+(defun web-server:stop()
+  (tbnl:stop virtual-host)
+  (bt:condition-notify stop-the-server))
+#+END_SRC
+feeling almost like [[https://lispcookbook.github.io/cl-cookbook/debugging.html][debugging the Deep Space 1 spacecraft]] ☺.
+

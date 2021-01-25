@@ -1,0 +1,59 @@
+#+TITLE: chalaev.com
+#+AUTHOR: Oleg Shalaev
+#+EMAIL:  oleg@chalaev.com
+
+* Introduction
+[[http://chalaev.com][www.chalaev.com]] is my old personal website which I am using to test [[https://edicl.github.io/hunchentoot][Hunchentoot]].
+This project is about /server/ (back end) code; the [[file:chalaev.com/][front end code]] serves mostly for demonstration purposes.
+
+The following /server/ features work:
+- serve static files on GET request,
+- basic authentication,
+- customized error pages (e.g. =404.html=),
+- serves =index.html= when asked for =/=, and =file.html= when asked for =file= (requires [[file:hunchentoot/][hunchentoot update]]).
+
+* Requirements
+Usual =linux= environment, =sbcl=, =quicklisp=, =emacs=, and [[https://github.com/chalaev/lisp-goodies/raw/master/packaged/cl-shalaev.tbz][lisp goodies]] unpacked into your local =quicklisp= repository.
+
+* Hosting
+The website is hosted on a (US-based) VPS server for \$2/month;
+for this price one enjoys 512Mb of RAM and 10Gb of disk space
+which might be enough for small business usage if system resources are used carefully.
+
+* Compiling (or not?)
+Compiling is unnecessary: we could just launch =sbcl= on the server and evaluate
+#+BEGIN_SRC lisp
+(ql:quickload :web-server)
+(web-server:start t)
+#+END_SRC
+However, I prefer to compile because compilation
+- makes the code faster,
+- saves valuable system resources on the server: e.g., we do not need to install =sbcl= there, and
+- makes it more difficult for +Forces of Darkness+ system administrators to analyze back end code on the server.
+
+=make= compiles the code to a 16Mb binary file which is copied to the server and launched there.
+
+You probably have to update [[file:Makefile][Makefile]] configuration
+(specifying where your =sbcl= and =quicklisp= are installed)
+to make it work on your system.
+
+* Debugging
+[[https://quickref.common-lisp.net/swank.html][Swank]] allows to connect to the (remote) code and update it (or change variables' values) without actually restarting the server.
+Since we do not want to open 4005th port on the server, let me tunnel it to the 4015th one on my local host:
+#+BEGIN_SRC shell
+ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -L 4015:localhost:4005 -fN chalaev.com
+ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -O check chalaev.com
+#+END_SRC
+(You might want to update your [[https://github.com/chalaev/cloud/blob/master/cloud.org][~/.ssh/config]] file to improve connection reliability.)
+
+Then in local =emacs= we
+#+BEGIN_SRC shell
+M-x slime-connect
+localhost
+4015
+#+END_SRC
+After that, we just use [[https://common-lisp.net/project/slime/][slime]] for debugging, just as for locally running code,
+but feeling almost like [[https://lispcookbook.github.io/cl-cookbook/debugging.html][debugging the Deep Space 1 spacecraft]] ☺.
+
+* License
+This code is released under [[https://mit-license.org/][MIT license]].

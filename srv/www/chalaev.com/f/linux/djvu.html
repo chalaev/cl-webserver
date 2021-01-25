@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="geo.region" content="US-NY" />
+    <meta name="geo.placename" content="Rochester" />
+    <meta name="geo.position" content="43.124937;-77.629888" />
+    <meta name="ICBM" content="43.124937, -77.629888" />
+    <meta charset="UTF-8">
+    <meta name="author" content="Oleg Shalaev">
+    <meta name="description" content="linux notes">
+    <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon" />
+    <meta name="keywords" content="linux,djvu">
+    <link type="text/css" rel="stylesheet" href="../../shalaev.css">
+    <link rel="stylesheet" href="/js/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../feedback.css"/>
+    <title>linux notes</title>
+  </head>
+
+<body>
+      <div id="nav"><a href="/cv">main page</a></div>
+    <script src="../../contents2.js"></script>
+
+        <script>
+      if ("https:" == window.location.protocol) {
+	window.location.assign(window.location.href.replace("https:","http:"));}
+      document.getElementById("nav").innerHTML = markActive("linux");
+    </script>
+
+    <div id="FBtab" class="FBtab_right" tabindex="0" onclick="showFBform()">
+      <div>
+	<span></span>
+      </div>
+      <div class="screen_reader">Activate to launch comment card</div>
+    </div>
+
+
+  <div class="container-fluid" id="content">
+
+    <div class="form-group col-md-6" id="fbBox"></div>
+
+<h3>Scan to djvu</h3>
+  <p>(All software used here is available from the standard <a href="https://www.debian.org" >debian linux</a> repositories.)<br>
+    I scan a lot so  scanning procedure must be simple and the resulting files must be small.
+    Most people use <code>pdf</code> which is not the best format for scanning.
+  There is a <code>djvu</code>-file format which was created primarily for scanning; normally <code>djvu</code> scans are smaller than <code>pdf</code> ones.
+Here is an example for (perhaps most linux-friendly) HP-hardware.
+  Suppose that my &quot;all-in-one&quot; hp device has an ip address 192.168.52.17;
+  When I need to scan several sheets, I change to an empty directory and type 
+</p>  
+<pre>
+scanadf -d &quot;hpaio:/net/Officejet_6700?ip=192.168.52.17&quot; -v -o ${1}%02d.pnm --source ADF --resolution 300 --mode Gray
+make -f <a href="../../pub/home/common/scan-Makefile">scan-Makefile</a>  </pre>
+  where <code>&quot;hpaio:/net/Officejet_6700?ip=192.168.52.17&quot;</code> comes from the output of
+<pre>hp-makeuri 192.168.52.17</pre>
+  <p> <code>make</code> command will convert all pnm-files in the current directory to <code>all.djvu</code>
+    Sometimes I email scanned documents; since I can not expect from people to know what
+<code>djvu</code> format is,   I convert <code>djvu</code> to <code>pdf</code>:
+  </p>
+  <pre>ddjvu -format=pdf -quality=85 -verbose input.djvu output.pdf </pre>
+<p>  Note: <a href="../../pub/home/common/scan-Makefile" >scan-Makefile</a>
+  is optimized for American &quot;Letter&quot; paper format;
+  you might have to modify it for another (say, &quot;A4&quot;) format.
+</p>
+  
+<p style="text-align: right;">
+<a  href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fchalaev.com%2Flinux"><small>validate this page</small></a>
+</p>
+  </div>
+<script type="text/javascript" src="/js/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="../../js-lib/common.js"></script>
+<script type="text/javascript" src="../../feedback.js"> </script>
+</body>
+</html>

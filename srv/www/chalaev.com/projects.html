@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="geo.region" content="US-NY" />
+    <meta name="geo.placename" content="Rochester" />
+    <meta name="geo.position" content="43.124937;-77.629888" />
+    <meta name="ICBM" content="43.124937, -77.629888" />
+    <meta charset="UTF-8">
+    <meta name="author" content="Oleg Shalaev"/>
+    <meta name="description" content="wifi-switcher, cl-libconfig"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="keywords" content="lisp libconfig, wifi-switcher"/>
+    <link rel="stylesheet" href="common.css">
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+    <title>Projects</title>
+  </head>
+  <body>
+    <div id="message" class="clear" style="background-color:rgba(0,0,0,.5)">You need to enable JavaScript to run this website.</div>
+    <script>
+     document.getElementById('message').style.display='none';
+     var localScripts=["chalaev.js"],thePage="projects";
+    </script>
+    <script async src="1.js"></script>
+
+    <div id="header">
+      <div id="verhAni">
+	<div id="menu" class="header" style="padding:0;margin:0"></div>
+      </div>
+
+      <p>This website was shut down for several years. Now in 2020 I am slowly resurrecting it; expect missing files and other errors...</p>
+
+      <h2>Projects:&nbsp;&nbsp;&nbsp;
+	<a class="HUC" style="width:19ex" href="#wifiswitcher">wifi-switcher</a>&nbsp;&nbsp;&nbsp;
+	<a class="HUC" style="width:17ex" href="#cl-libconfig">cl-libconfig</a>&nbsp;&nbsp;&nbsp;
+	<a class="HUC" style="width:6ex" href="#esy">esy</a>
+      </h2>
+
+      <p>See my <a href="https://github.com/chalaev" >github page</a>.</p>
+
+      <h3 id="wifiswitcher">wifi-switcher</h3>
+      <p>For years I used graphic utilities
+	(<a href="http://wicd.sourceforge.net/" >wicd</a> and <a href="https://wiki.gnome.org/Projects/NetworkManager/" >NetworkManager</a>)
+	on my laptops to establish wireless network connections.</p>
+      <p>Then I realized that linux actually
+	has a number of reliable command-line utilites (iwlist, ifup, ifdown, isc-dhcp-server, wpa_supplicant, hostapd)
+	that provide almost the same functionality as
+	<a href="http://wicd.sourceforge.net/" >wicd</a> or <a href="https://wiki.gnome.org/Projects/NetworkManager/" >NetworkManager</a>.</p>
+      <p>I wrote a  perl frontend for these command-line utilites
+	which can be used to connect to (or create a) wifi network.
+	I primarily use it with <a href="https://ice-wm.org" >IceWM</a>;
+	howerver, it is also compatible with a <a href="https://joeyh.name/code/pdmenu/" >pdmenu</a> menu program
+	which can be launched from any terminal, even in text mode.</p>
+
+      <p>The source and debian package are available <a href="https://github.com/chalaev/chalaev/tree/master/pub/ws/" >here</a>.
+	I believe that it is stable (>6 month testing in debian jessie and stretch);
+	please <a href="mailto:oleg@chalaev.com" >email me</a> if it does not install or work properly.</p>
+
+      <p class="vert-align">
+	These screenshots demonstrate wifi management in IceWM and in console
+	(using <a href="https://joeyh.name/code/pdmenu/" >pdmenu</a>):<br>
+	<img src="f/projects/t02.png" alt="wifi-switcher screenshot (X Window)" data-toggle="tooltip" title="wifi management in IceWM">
+	<img src="f/projects/t08.png" alt="wifi-switcher screenshot (console)" data-toggle="tooltip" title="wifi management in terminal" >
+	<br> where &quot;disorder&quot; is the name of my wireless network, and signal strength in graphically shown in front of every
+	network's name.
+      </p><p>Apart from switching between wifi-networks, wifi-switcher can be turned into the wifi-server (adhoc) mode with an ftp server.
+	This is especially handy for my wife's windows smartphone that does not have a slot for an external sdhc-card:
+	I connect the phone to the adhoc wifi-network, log in to the ftp-server using <a href="http://www.ghisler.com/" >TotalCommander</a>
+	and move the files (photo/audio/video) from/to the smartphone.
+      </p>
+
+      <h3 id="cl-libconfig">cl-libconfig</h3>
+      <p>Lisp is my favorite programming language; unfortunately, it is not so widely used and there are still no lisp-interfaces to
+	some handy libraries. I like to work with <a href="http://www.hyperrealm.com/libconfig/" >libconfig</a> library in my C++ projects;
+	it is universal (available for C, C++, python, perl), and its syntax is powerful enough for my needs.
+	(I always use <a href="http://www.hyperrealm.com/libconfig/" >libconfig</a> unless I have to deal with large amounts of data.)
+      </p>
+      <p>
+	cl-libconfig is the common lisp interface to <a href="http://www.hyperrealm.com/libconfig/" >libconfig</a>; it is
+	available on <a href="https://github.com/chalaev/cl-libconfig" >github</a>.
+	If you have <code>quicklisp</code> installed, place <code>cl-libconfig</code> source into the
+	<code>~/quicklisp/local-projects/libconfig/</code> directory, and then you can
+	use it in lisp (say, sbcl) via the <code>(ql:quickload :libconfig)</code> command.
+      </p>
+
+      <h3 id="esy">esy</h3>
+      <p>I do not trust clouds. I think that they would use my files (if they could) to gather information about my habits, income, etc.,
+	and then sell it (without paying me anything) to those annoying people who regularly call me trying to sell something.
+	Any closed-source software written by companies like Google or Dropbox is potentially a spyware.
+	So I use Russian <a href="https://disk.yandex.com/" >yandex-disk</a>
+	and Swiss <a href="https://www.pcloud.com/" >pcloud</a>
+	to store <b>encrypted</b> backup archives.
+	These are the only companies providing free cloud storage I know
+	who allow to up(down)load the files using
+	mount.davfs
+	included in standard Debian repository.</p>
+      <p>Previously I used <a href="https://disk.yandex.com/">yandex-disk</a> proprietary linux client
+	jailed in <a href="pub/etc/apparmor.d/usr.bin.yandex-disk" >apparmor</a>.
+	For daily backups I use <a href="pub/etc/backup2l.conf" >backup2l with gpg-encryption</a>
+	so that even my file names are not accessible to cloud owners.</p>
+
+      <p>Esy (stands for &quot;easy synchronization&quot;) is a lisp-code which synchronizes files/directories between different computers;
+	it is not necessary that all the hosts are online.
+	When a file/directory on one host is renamed/moved/erased/modified/chmod-ed, this is recorded by the esy daemon.
+	When I stopped working on this host (say, in the office), I tell the daemon to stop:</p>
+      <div class="org-src-container">  <pre class="src src-sh">echo &quot;quit&quot; > ~/.esy/message.ctl ; mkdir ~/.esy/do-read.ctl</pre></div>
+      <p>
+	It creates an archive of newly created and modified files;
+	(Only important files are monitored; the importance is flexibly encoded in
+	<a href="https://github.com/chalaev/esy/blob/master/examples/real-life/theorie13.conf" >configuration file</a>.)
+	Also a shell script with commands to unpack/rename/move/erase/chmod the files on another host is created.
+	The sorce code together with examples of configuration, generated shell scripts, and logs is available on <a href="https://github.com/chalaev/esy" >github page</a>.
+      </p>
+
+      <p>This project is unstable for now.</p>
+
+      <p style="text-align: right;">
+	<a href="mailto:oleg@chalaev.com">oleg@chalaev.com</a><br>
+	<a  href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fchalaev.com%2Fprojects"><small>validate this page</small></a>
+      </p>
+    </div>
+  </body>
+</html>

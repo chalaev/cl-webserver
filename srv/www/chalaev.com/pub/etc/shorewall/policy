@@ -1,0 +1,8 @@
+###############################################################################
+#SOURCE		DEST		POLICY		LOG LEVEL	LIMIT:BURST
+net          all          DROP
+$FW          all          ACCEPT           
+loc          all          ACCEPT 
+all all REJECT INFO
+
+#LAST LINE -- ADD YOUR ENTRIES ABOVE THIS LINE -- DO NOT REMOVE

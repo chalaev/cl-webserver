@@ -1,0 +1,42 @@
+This is nginx configuration file
+=/etc/nginx/sites-available/chalaev.com= and
+=/etc/nginx/sites-enabled/chalaev.com=
+
+It tells nginx to forward all requests to chalaev.com to localhost:50001
+
+#+BEGIN_SRC nginx :tangle generated/chalaev-com.nginx
+forward www.chalaev.com to chalaev.com:
+server {
+        listen 80;
+        listen  443 ssl;
+        server_name www.chalaev.com;
+        return 301 $scheme://chalaev.com$request_uri;
+ssl_certificate     /etc/letsencrypt/live/chalaev.com/fullchain.pem; # managed by Certbot
+ssl_certificate_key /etc/letsencrypt/live/chalaev.com/privkey.pem; # managed by Certbot
+}
+#+END_SRC
+
+Forward all http requests to https:
+#+BEGIN_SRC nginx :tangle generated/chalaev-com.nginx
+server {
+listen 80;
+listen [::]:80;
+server_name chalaev.com;
+return 301 https://chalaev.com$request_uri; 
+}
+#+END_SRC
+
+#+BEGIN_SRC nginx :tangle generated/chalaev-com.nginx
+server {
+listen  443 ssl;
+server_name chalaev.com;
+ssl_certificate     /etc/letsencrypt/live/chalaev.com/fullchain.pem; # managed by Certbot
+ssl_certificate_key /etc/letsencrypt/live/chalaev.com/privkey.pem; # managed by Certbot
+#+END_SRC
+
+Compiled binary (see [[file:Makefile][Makefile]]) is listening on 50001th port:
+#+BEGIN_SRC nginx :tangle generated/chalaev-com.nginx
+location / {
+proxy_pass http://localhost:50001;
+}}
+#+END_SRC

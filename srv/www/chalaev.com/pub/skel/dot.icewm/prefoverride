@@ -1,0 +1,39 @@
+# -----------------------------------------------------------
+# Themable preferences. Themes will override these.
+# To override the themes, place them in ~/.icewm/prefoverride
+# -----------------------------------------------------------
+#
+MenuFontName="-*-*-*-r-*-*-12-*-*-*-*-*-*-*"
+StatusFontName="-*-*-*-r-*-*-8-*-*-*-*-*-*-*"
+NormalTaskBarFontName="-*-*-*-r-*-*-12-*-*-*-*-*-*-*"
+ActiveTaskBarFontName="-*-*-*-r-*-*-12-*-*-*-*-*-*-*"
+FxFontName="-*-*-*-*-*-*-12-*-*-*-*-*-*-*"
+QuickSwitchFontName="-*-*-*-*-*-*-12-*-*-*-*-*-*-*"
+NormalButtonFontName="-*-*-*-*-*-*-12-*-*-*-*-*-*-*"
+ActiveButtonFontName="-*-*-*-*-*-*-12-*-*-*-*-*-*-*"
+NormalTaskBarFontName="-*-*-*-*-*-*-12-*-*-*-*-*-*-*"
+ActiveTaskBarFontName="-*-*-*-*-*-*-12-*-*-*-*-*-*-*"
+TitleFontName="-*-*-*-*-*-*-8-*-*-*-*-*-*-*"
+# Font Specification
+TitleFontNameXft	   = 	  "book antiqua:size=8:bold"
+MenuFontNameXft	         =    "garamond:size=12:bold"
+MinimizedWindowFontNameXft =    "garamond:size=12"
+ActiveButtonFontNameXft    =    "book antiqua:size=12:bold"
+NormalButtonFontNameXft    =    "lusidatypewriter:size=12"
+QuickSwitchFontNameXft     =    "garamond:size=12"
+ListBoxFontNameXft         =    "garamond:size=12"
+StatusFontNameXft          =    "garamond:size=10"
+ToolTipFontNameXft         =    "garamond:size=10"
+ActiveTaskBarFontNameXft   =    "book antiqua:size=12:bold"
+NormalTaskBarFontNameXft   =    "book antiqua:size=12"
+ClockFontNameXft           =    "garamond:size=12:bold"
+ApmFontNameXft             =    "garamond:size=12:bold"
+
+
+# TitleBarHeight=30
+# I like clock from the Infadel2 theme:
+ColorClock="rgb:32/3d/4c"
+ColorClockText="rgb:c0/c0/c0"
+ClockFontNameXft           =    "lucida:size=10:bold,sans-serif:size=10:bold"
+ClockFontName		=	"-b&h-lucida-bold-r-normal-sans-10-*-*-*-*-*-*-*"
+TaskBarClockLeds=0

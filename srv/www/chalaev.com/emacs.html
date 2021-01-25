@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="geo.region" content="US-NY" />
+    <meta name="geo.placename" content="Rochester" />
+    <meta name="geo.position" content="43.124937;-77.629888" />
+    <meta name="ICBM" content="43.124937, -77.629888" />
+    <meta charset="UTF-8">
+    <meta name="author" content="Oleg Shalaev"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="description" content="dpans2texi patch"/>
+    <meta name="keywords" content="dpans2texi, patch"/>
+    <link rel="stylesheet" href="common.css"/>
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+    <title>emacs notes</title>
+  </head>
+  <body>
+    <div id="message" class="clear" style="background-color:rgba(0,0,0,.5)">You need to enable JavaScript to run this website.</div>
+    <script>
+     document.getElementById('message').style.display='none';
+     var localScripts=["chalaev.js"],thePage="/";
+    </script>
+    <script async src="1.js"></script>
+
+    <div id="header">
+      <div id="verhAni">
+	<div id="menu" class="header" style="padding:0;margin:0"></div>
+      </div>
+      <p>This website was shut down for several years. Now in 2020 I am slowly resurrecting it; expect missing files and other errors...</p>
+
+      
+      <h2>emacs</h2>
+      
+      <p>For people familiar with lisp emacs has no competitors; but even before learning lisp it was a handy tool for me and
+	I used it for c.a. 10 years. Here I collect my emacs tips/notes and pieces of code.
+      </p>
+
+      <h3>Patching dpans2texi</h3>
+      <p>The <a href="https://github.com/RobBlackwell/dpans2texi" ><code>original dpans2texi project</code></a>
+	was erased on github, so now one can use <a href="https://github.com/ruricolist/dpans2texi">its clone</a> or
+	<a href="https://github.com/chalaev/chalaev/tree/master/f/emacs">my archive</a>.
+      </p>
+
+      <p><a href="https://github.com/ruricolist/dpans2texi" ><code>dpans2texi</code></a> is a useful software which
+	transforms <code>TeX</code> manuals to <code>info</code> format.
+	The latter is understood by emacs, so, for example, when you write lisp code,
+	you can get documentation (better than what <code>slime</code> provides) for lisp functions and symbols by pressing C-c C-d h.</p>
+
+      <p>Install original <a href="https://github.com/ruricolist/dpans2texi" ><code>dpans2texi</code></a> and patch it:</p>
+      <pre>git clone <a href="https://github.com/ruricolist/dpans2texi" >https://github.com/ruricolist/dpans2texi</a>
+cd dpans2texi
+wget <a href="f/emacs/dpans2texi.patch" >chalaev.com/emacs/dpans2texi.patch</a>
+patch -p1 &lt; <a href="f/emacs/dpans2texi.patch" >dpans2texi.patch</a>
+make clean; rm *.tex
+./configure --prefix=$HOME/local
+make wget && make && make install</pre>
+      
+      <p>(See also <a href="https://github.com/ruricolist/dpans2texi" ><code>dpans2texi</code></a>  manual).
+	After the following piece of code is evaluated, we can get help on
+	lisp symbols using standard slime key combination (default C-c C-d h).
+	In order to activate info-files produced by <a href="https://github.com/ruricolist/dpans2texi" >dpans2texi</a>
+	insert the following into your <code>~/.emacs</code> file:</p>
+      <pre>(require 'info-look)
+(setq Info-additional-directory-list (list (substitute-in-file-name "$HOME/local/share/info")))
+
+(with-eval-after-load "slime"
+  ;; register info help (dpans2texi)
+  (info-lookup-add-help
+   :mode 'lisp-mode
+   :regexp "[^][()'\" \t\n]+"
+   :ignore-case t
+   :doc-spec '(("(ansicl)Symbol Index" nil nil nil)))
+    
+  (info-lookup-add-help
+   :mode 'slime-repl-mode
+   :regexp "[^][()'\" \t\n]+"
+   :ignore-case t
+   :doc-spec '(("(ansicl)Symbol Index" nil nil nil)))
+
+  (defvar slime-old-documentation-lookup-function
+    (if (boundp 'slime-documentation-lookup-function)
+	slime-documentation-lookup-function))
+  
+  (defun slime-ansicl-lookup (symbol-name)
+    (interactive (list (slime-read-symbol-name "Symbol: ")))
+    (info-lookup-symbol symbol-name 'lisp-mode))
+  
+  (setq slime-documentation-lookup-function 'slime-ansicl-lookup)
+  (setq slime-ansicl-lookup (symbol-function 'slime-ansicl-lookup)))</pre>
+
+      <p>The <a href="f/emacs/dpans2texi.patch" >patch</a> does the following:</p>
+      <ol>
+	<li>fixes <code>dpi.texi</code> encoding </li>
+	<li>a couple of fixes in <code>dp.texi</code></li>
+	<li>adds treatment of TeX macro <code>\it</code> to <code>dpans2texi.el</code></li>
+	<li>removes non-working redefinition of <code>@code</code> from <code>dpi.texi</code></li>
+      </ol>
+      This patch is a quick fix; it can be improved (sometimes I note strange symbols in the emacs info-buffer).
+      Unfortunately, many packages available from <code>quicklisp</code> are not covered in the standard TeX-lisp manual;
+      when I have time, I will slowly update the standard TeX-lisp manual with info on (my favorite) common-lisp packages, such as <code>osicat</code>
+      and <a href="https://github.com/chalaev/cl-libconfig" ><code>cl-libconfig</code></a>.
+
+      <p style="text-align:right;">
+	<a href="mailto:oleg@chalaev.com">oleg@chalaev.com</a><br>
+	<a href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fchalaev.com%2Femacs"><small>validate this page</small></a>
+      </p>
+    </div>
+  </body>
+</html>

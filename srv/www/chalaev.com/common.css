@@ -1,0 +1,81 @@
+body{background-color: #f2f4f7}
+
+#header{
+    background-color:white;
+    max-width:1200px;
+    padding:0 1ex;
+    margin:auto}
+
+a{color:#42507F;text-decoration:none}
+a.conf-item{padding:0 1ex}
+
+a.HUC{display:inline-block;text-align:center}
+a.HUC:hover{text-transform:uppercase}
+
+html{scroll-behavior:smooth} /* ;background:#414141 */
+
+@media(min-width:636px){
+    #tinyMenu{display:none}
+    #obtn{display:none}}
+
+#tinyMenu{background-color:rgba(255,255,255,.6);
+	  z-index:10;
+	  border-radius:30%;padding:5px}
+#tinyMenu> i{
+    display:block;
+  width: 35px;
+  height: 3px;
+  background-color:#42507F;/*  rgb(167,167,167); */
+  margin: 4px 0; }
+
+.header>ul.nav>li>a.current{text-transform:uppercase}
+
+/* .header>ul.nav{ */
+/*     z-index:15; */
+/*     position:absolute;right:0;top:0;margin:0; */
+/*     height:60px;list-style:none;cursor:default} */
+
+.header.fixed ul.nav{height:40px}
+.header ul.nav>li{
+background-color:#E2E2E2;
+text-align:center;
+padding:5px;
+font-size:110%;
+display:inline-block}
+
+.header ul.nav>li:hover{text-transform:uppercase}
+
+#mainMenu{z-index:10;position:fixed;top:0;right:3px;margin-top:3px}
+
+@media(max-width:635px){
+#obtn{display:block;padding-bottom:1em}
+#mainMenu{display:none}
+.header.fixed #topNav #topMain>li>a{height:60px;line-height:40px}}
+
+/* ========== */
+
+code{
+   padding-top: 0.2em;
+   padding-bottom: 0.2em;
+   margin: 0;
+   background-color: rgba(0,0,0,0.04);
+   color: #333;
+   border-radius: 3px;
+   font-size: 100%;
+   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+   box-sizing: border-box;
+   line-height: 1.5;
+   word-wrap: break-word}
+
+pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    overflow: auto;
+    margin-top: 10px;
+    padding: 5pt;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+

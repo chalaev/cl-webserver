@@ -1,0 +1,48 @@
+# Time-stamp: <2015/01/02 17:35:18 EST by Oleg SHALAEV http://chalaev.com >
+
+#include <tunables/global>
+
+# Version 04 for version  31.2 of iceweasel (firefox).
+
+# This file controls plugins such as Flash Player.
+# If I were writing viruses for firefox, I would act through plugins.
+# This is why this file must be as restrictive as possible!
+
+/usr/lib/iceweasel/plugin-container {
+  #include <abstractions/audio>
+  #include <abstractions/base>
+  #include <abstractions/consoles>
+  #include <abstractions/ubuntu-konsole>
+
+  capability sys_ptrace,
+
+  /bin/dash rix,
+  /bin/grep rix,
+  /bin/ps rix,
+/usr/bin/flash-player-properties ix,
+  /etc/nsswitch.conf r,
+deny /etc/group r,
+deny /etc/passwd r,
+  /etc/vdpau_wrapper.cfg r,
+deny  @{HOME}/.Xauthority r,
+  @{HOME}/.adobe/Flash_Player/** rw,
+  @{HOME}/.fonts.conf r,
+# added the following 3 lines 2015/01/02:
+  @{HOME}/.macromedia/ rw,
+  @{HOME}/.macromedia/** rw,
+#  so now we do not need this line any more: @{HOME}/.macromedia/Flash_Player/** rw,
+@{HOME}/.adobe/ rw,
+@{HOME}/.adobe/** rw,
+  @{HOME}/.mozilla/firefox/*.default/* r,
+  @{HOME}/.mozilla/firefox/profiles.ini r,
+  /proc/ r,
+  /proc/sys/kernel/pid_max r,
+  /proc/tty/drivers r,
+deny  /proc/uptime r,
+  owner /tmp/** rlk,
+  /tmp/** w,
+  /usr/lib/iceweasel/plugin-container mr,
+  /usr/lib/x86_64-linux-gnu/pango/*/modules/* mr,
+  /usr/share/themes/Raleigh/gtk-2.0/gtkrc r,
+
+}

@@ -1,0 +1,6 @@
+# -*- coding: utf-8 -*-
+###############################################################################
+#INTERFACE		SOURCE		ADDRESS		PROTO	PORT(S)	IPSEC	MARK
+wlan0                    eth0
+# ← approximately same as: iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to 128.206.124.254
+#LAST LINE -- ADD YOUR ENTRIES ABOVE THIS LINE -- DO NOT REMOVE

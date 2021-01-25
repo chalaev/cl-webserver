@@ -1,0 +1,46 @@
+# Time-stamp: <2015/01/02 10:24:08 EST by Oleg SHALAEV http://chalaev.com >
+# problems with the flash downloader remain unsolved for now
+
+#include <tunables/global>
+
+# Version 02 for version  31.2 of iceweasel (firefox).
+
+# This file controls plugins such as Flash Player.
+# If I were writing viruses for firefox, I would act through plugins.
+# This is why this file must be as restrictive as possible!
+
+/usr/lib/iceweasel/plugin-container {
+  #include <abstractions/audio>
+  #include <abstractions/base>
+  #include <abstractions/consoles>
+  #include <abstractions/ubuntu-konsole>
+
+  capability sys_ptrace,
+
+  /bin/dash rix,
+  /bin/grep rix,
+  /bin/ps rix,
+/usr/bin/flash-player-properties ix,
+  /etc/nsswitch.conf r,
+deny  /etc/passwd r,
+  /etc/vdpau_wrapper.cfg r,
+deny  @{HOME}/.Xauthority r,
+  @{HOME}/.adobe/Flash_Player/** rw,
+  @{HOME}/.fonts.conf r,
+# added the fol. 3 lines 2015/01/02 (ну никак у меня не получается загружать флеш-видео):
+  @{HOME}/.macromedia/ rw,
+  @{HOME}/.macromedia/** rw,
+@{HOME}/.adobe/ rw,
+#  @{HOME}/.macromedia/Flash_Player/** rw,
+  @{HOME}/.mozilla/firefox/*.default/* r,
+  @{HOME}/.mozilla/firefox/profiles.ini r,
+  /proc/ r,
+  /proc/sys/kernel/pid_max r,
+  /proc/tty/drivers r,
+deny  /proc/uptime r,
+  owner /tmp/** rlk,
+  /tmp/** w,
+  /usr/lib/iceweasel/plugin-container mr,
+  /usr/share/themes/Raleigh/gtk-2.0/gtkrc r,
+
+}

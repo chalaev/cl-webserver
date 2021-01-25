@@ -1,0 +1,50 @@
+My updates to =hunchentoot=.
+
+* misc.lisp
+
+#+BEGIN_SRC shell
+patch /your-QL-directory/dists/quicklisp/software/hunchentoot-v1.3.0/misc.lisp misc.diff
+#+END_SRC
+
+
+#+BEGIN_SRC lisp :tangle generated/misc.lisp
+(defun handle-static-file (PN &optional content-type callback)
+(let((index.html (merge-pathnames PN (make-pathname :name "index" :type "html"))))
+    (cond
+      ((and (fad:directory-exists-p PN) (fad:file-exists-p index.html))
+       (handle-static-file index.html content-type callback))
+      ;; ((fad:directory-exists-p PN) ...) generate list of files in the directory
+      ((null (pathname-type PN))
+       (handle-static-file (make-pathname :directory (pathname-directory PN) :name (pathname-name PN) :type "html") content-type callback))
+      ((not (fad:file-exists-p PN))
+       (log-message* :debug "file ~s does not exist" PN)
+       (setf (return-code*) +http-not-found+)
+       (abort-request-handler))
+      (t
+(unless content-type (setf content-type (mime-type PN)))
+(let ((time (or (file-write-date PN) (get-universal-time))) bytes-to-send)
+  (setf (content-type*) (or
+			 (and content-type (maybe-add-charset-to-content-type-header content-type (reply-external-format*)))
+                         "application/octet-stream")
+        (header-out :last-modified) (rfc-1123-date time)
+        (header-out :accept-ranges) "bytes")
+  (handle-if-modified-since time); ← consider setting +http-not-modified+ return code
+  (when callback (funcall callback PN content-type))
+  (with-open-file (file PN :direction :input :element-type 'octet)
+    (setf
+     bytes-to-send (maybe-handle-range-header file)
+     (content-length*) bytes-to-send)
+    (let ((out (send-headers))
+          (buf (make-array +buffer-length+ :element-type 'octet)))
+      (loop
+        (when (zerop bytes-to-send) (return))
+        (let ((chunk-size (min +buffer-length+ bytes-to-send)))
+          (unless (eql chunk-size (read-sequence buf file :end chunk-size)) (error "can't read from input file"))
+             (write-sequence buf out :end chunk-size)
+          (decf bytes-to-send chunk-size)))
+      (finish-output out))))))))
+#+END_SRC
+
+* Accept-Encoding gzip
+Another update: it should search request headers for =Accept-Encoding gzip= 
+and, if found and gzipped file exists, send it.

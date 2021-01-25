@@ -1,0 +1,7 @@
+# http://shorewall.net/manpages/shorewall-interfaces.html
+################################################
+#ZONE	INTERFACE	BROADCAST	OPTIONS
+loc  eth0 detect dhcp
+net wlan0 detect dhcp,routefilter,tcpflags
+#modem ppp0 detect dhcp,routefilter,tcpflags
+#LAST LINE -- ADD YOUR ENTRIES BEFORE THIS ONE -- DO NOT REMOVE

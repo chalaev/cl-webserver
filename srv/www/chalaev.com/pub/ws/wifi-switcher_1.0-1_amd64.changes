@@ -1,0 +1,50 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Format: 1.8
+Date: Wed, 07 Oct 2015 22:03:16 -0400
+Source: wifi-switcher
+Binary: wifi-switcher
+Architecture: source all
+Version: 1.0-1
+Distribution: unstable
+Urgency: low
+Maintainer: Oleg Shalaev <chalaev@gmail.com>
+Changed-By: Oleg Shalaev <chalaev@gmail.com>
+Description:
+ wifi-switcher - wifi-manager for icewm and pdmenu
+Closes: 805116
+Changes:
+ wifi-switcher (1.0-1) unstable; urgency=low
+ .
+   * Initial release (Closes: #805116).
+Checksums-Sha1:
+ 73155218abfa64adf5f069828912707dc28fa3c1 1412 wifi-switcher_1.0-1.dsc
+ 46572ee47a9b15b8f3afbb016107b7115fb5da16 826264 wifi-switcher_1.0.orig.tar.xz
+ 952bdc0e99746d40d4fdec771abdd8ce90b32918 9792 wifi-switcher_1.0-1.debian.tar.xz
+ c1d5e90028b789a7f2dffc8a6035a1e8b9a04888 30058 wifi-switcher_1.0-1_all.deb
+ 8c53301f7d3ae411bc107c5eda419c8abc8af44e 4611 wifi-switcher_1.0-1_amd64.buildinfo
+Checksums-Sha256:
+ 6e3699161a989d1bc16fa8e4a2b26f4a35f9076d8757d4486760e4b0eda948c8 1412 wifi-switcher_1.0-1.dsc
+ 2adea1539bc2a296549d4538bac74f03e12496bdf0b6563ab3ed0465881ac708 826264 wifi-switcher_1.0.orig.tar.xz
+ 05d1c69a0f30eb1007e90fef41c02bf1fb5ef723ed53c0dead394ff24eacb16c 9792 wifi-switcher_1.0-1.debian.tar.xz
+ 6940647daf9809cca7dc199687503819c20f7129a498c4102045bb5943b5995b 30058 wifi-switcher_1.0-1_all.deb
+ 019ba935a3ab5ff7d84c1f6bdb32c5125dc9686ad845bb4deaebb0f90654ed07 4611 wifi-switcher_1.0-1_amd64.buildinfo
+Files:
+ 8591ab882c48ef0f4c9de21b52501199 1412 net optional wifi-switcher_1.0-1.dsc
+ 77cc6e5013d938e514bf21e008188700 826264 net optional wifi-switcher_1.0.orig.tar.xz
+ 2a9b4bdd8815531cfc0b51a0b8b21ac8 9792 net optional wifi-switcher_1.0-1.debian.tar.xz
+ 83725c82d565906e24ca0d757eb62dd9 30058 net optional wifi-switcher_1.0-1_all.deb
+ d16dc77c3d20c520e719a9639f08ae00 4611 net optional wifi-switcher_1.0-1_amd64.buildinfo
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFGBAEBCAAwFiEEUyfbH962Z6ofAPDG0SRRqvGDptgFAlg55okSHGNoYWxhZXZA
+Z21haWwuY29tAAoJENEkUarxg6bYF6wIAJrGqdBCeNcUWY7H8hyVUNzfrFt0qtUt
+sh7n2xJkTWKtZcSNuoeelKngr6LCdiammdrXzvj6/S9n0zsIf/2d2RztxdyQSOY6
+PhSKuI/vnbxJ16+f1lfoBqaz9P2vNyJROTcRpG0Y6aguC9BPy6mohFjgGSsAOmbT
+hNmOxUIDVgGiIw+NA8l7umx7N+H8Jt1RAoaOk7ujZrxkOCoHbSVeQF3TxRX+lNB5
+34JF4CqWd47Ow59+B2uyRSJoIJ2hj0PQnzdmNKFYf2GSqBWDmncktumxZeHdocdd
+uq57MVuS4D4w6ud0Z3HJoVeI8DLqzEQgdHq/0WcVzKAEg1yAQySvDMA=
+=JECZ
+-----END PGP SIGNATURE-----

@@ -1,0 +1,131 @@
+# Last Modified: Sat Apr 30 16:13:49 2016
+#include <tunables/global>
+
+
+#  /usr/bin/yandex-browser {
+/opt/yandex/browser-beta/yandex-browser-beta {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+
+  #include <abstractions/audio>
+  #include <abstractions/cups-client>
+  #include <abstractions/dbus-session>
+  #include <abstractions/nameservice>
+  #include <abstractions/p11-kit>
+  #include <abstractions/ubuntu-browsers>
+  #include <abstractions/gnome>
+  #include <abstractions/ibus>
+#include <abstractions/ubuntu-browsers.d/plugins-common>
+#include <abstractions/ubuntu-browsers.d/mailto>
+
+#include <abstractions/ubuntu-browsers.d/multimedia>
+#include <abstractions/ubuntu-browsers.d/productivity>
+#include <abstractions/ubuntu-browsers.d/java>
+#include <abstractions/ubuntu-browsers.d/kde>
+#include <abstractions/ubuntu-browsers.d/text-editors>
+#include <abstractions/ubuntu-browsers.d/ubuntu-integration>
+
+capability sys_admin,
+capability sys_chroot,
+
+/etc/ld.so.cache r,
+/etc/udev/udev.conf r,
+/lib/x86_64-linux-gnu/libselinux.so.1 r,
+/usr/share/distro-info/debian.csv r,
+/usr/share/pyshared/lsb_release.py r,
+
+/dev/shm/*.yandex.desktop.browser.* rw,
+
+  # for networking
+  network inet stream,
+  network inet6 stream,
+  @{PROC}/[0-9]*/net/if_inet6 r,
+  @{PROC}/[0-9]*/net/ipv6_route r,
+  @{PROC}/[0-9]*/net/dev r,
+  @{PROC}/[0-9]*/net/wireless r,
+/proc/sys/net/ipv4/tcp_fastopen r,
+
+/sys/devices/pci*/**/{device,resource,irq,vendor,class,uevent} r,
+/run/udev/data/* r,
+/sys/bus/pci/devices/*/device r,
+/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_max_freq r,
+
+/opt/yandex/browser-beta/** r,
+/proc/ r,
+/proc/sys/kernel/yama/ptrace_scope r,
+/proc/sys/kernel/shmmax r,
+/sys/devices/system/cpu/ r,
+/sys/bus/pci/devices/ r,
+# it also tries to access many /proc/self/* files:
+/proc/*/stat r,
+/proc/*/oom_score_adj rw,
+/proc/*/auxv r,
+/proc/*/task/ r,
+/proc/*/status r,
+/proc/*/cmdline r,
+/proc/*/environ r,
+/proc/*/setgroups rw,
+/proc/*/uid_map rw,
+/proc/*/gid_map rw,
+
+
+# /dev/zero m,
+/dev/tty rw,
+
+/bin/readlink ixr,
+/usr/bin/dirname ixr,
+/bin/cat ixr,
+/bin/which ixr,
+/bin/mkdir ixr,
+/bin/gzip ixr,
+/usr/bin/wget ixr,
+/usr/bin/xdg-settings ixr,
+/usr/bin/lsb_release ixr,
+/usr/bin/dbus-send ixr,
+/usr/bin/xprop ixr,
+/bin/uname ixr,
+/usr/bin/xdg-mime ixr,
+/usr/bin/mawk ixr,
+/usr/bin/cut ixr,
+/usr/bin/head ixr,
+/usr/bin/basename ixr,
+
+/usr/lib/locale/*/LC_{TIME,COLLATE,NUMERIC} r,
+/usr/share/locale/*/LC_MESSAGES/coreutils.mo r,
+
+  /bin/bash ix,
+  /opt/yandex/browser-beta/yandex-browser-beta ixr,
+/opt/yandex/browser-beta/yandex_browser ixr,
+/opt/yandex/browser-beta/lib/libffmpeg.so rm,
+/opt/yandex/browser-beta/*.bin r,
+/etc/wgetrc r,
+/usr/local/lib/python*/dist-packages/ r,
+
+deny /etc/group r,
+deny /etc/passwd r,
+
+  /etc/mime.types r,
+  /etc/mailcap r,
+  owner @{HOME}/.mailcap r,
+  owner @{HOME}/.local/share/applications/defaults.list r,
+  owner @{HOME}/.local/share/applications/mimeapps.list r,
+  owner @{HOME}/.local/share/applications/mimeinfo.cache r,
+  owner /tmp/** m,
+  owner /var/tmp/** m,
+owner @{HOME}/.yandex/ui r,
+owner @{HOME}/.config/yandex-browser*/** rw,
+owner @{HOME}/.pki/nssdb/ rw,
+owner @{HOME}/.pki/nssdb/*.db rwk,
+/home/shalaev/.pki/nssdb/* r,
+/home/shalaev/.config/yandex-browser-beta/** rwk,
+/home/shalaev/.cache/yandex-browser-beta/** rw,
+/home/shalaev/.wget-hsts r,
+
+# Default profile allows downloads to ~/Downloads and uploads from ~/Public
+#  owner @{HOME}/ rw,
+  owner @{HOME}/Public/ r,
+  owner @{HOME}/Public/* r,
+  owner @{HOME}/Downloads/ rw,
+  owner @{HOME}/Downloads/** rw,
+  owner @{HOME}/Public/** r,
+}
