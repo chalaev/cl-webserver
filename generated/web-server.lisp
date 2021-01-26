@@ -12,17 +12,6 @@
   (apply #'SL:log (cons LT (cons (concatenate 'string "WS " format-string) format-arguments)))))
 
 (defvar *dispatchers* '())
-#+server
-(defclass vhost (tbnl:ssl-acceptor)
-()
-(:default-initargs
-  :address "127.0.0.1"
-  :ssl-certificate-file "/etc/letsencrypt/live/chalaev.com/fullchain.pem"
-  :ssl-privatekey-file  "/etc/letsencrypt/live/chalaev.com/privkey.pem"
-  :document-root #p"/srv/www/chalaev.com/"
-  :error-template-directory #p"/srv/www/chalaev.com/errors/"))
-
-#-server
 (defclass vhost (tbnl:acceptor)
 ()
 (:default-initargs
@@ -33,9 +22,9 @@
 (defmethod dispatch-table((acceptor vhost))
   (append *dispatchers* (web-server/files:dispatchers)))
 
-(defmethod tbnl:acceptor-dispatch-request ((vhost vhost) request); called by (default)  HANDLE-REQUEST(acceptor) method. 
-(setf (tbnl:header-out :server) "ilikeit"); otherwise its gonna be "Hunchentoot"
-  (mapc #'(lambda(dispatcher); asking every dispatcher for a hndler until one of them provides it
+(defmethod tbnl:acceptor-dispatch-request ((vhost vhost) request); called by (default)  HANDLE-REQUEST(acceptor) method.
+
+(mapc #'(lambda(dispatcher); asking every dispatcher for a hndler until one of them provides it
 	    (when-let((handler(funcall dispatcher request))); Great! We've got a handler, so
 	      (return-from tbnl:acceptor-dispatch-request (funcall handler)))); let's lauch it
 	(dispatch-table vhost))

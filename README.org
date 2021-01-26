@@ -2,23 +2,27 @@
 #+AUTHOR: Oleg Shalaev
 #+EMAIL:  oleg@chalaev.com
 
+An example or template by those who want to host their websites on [[https://edicl.github.io/hunchentoot][Hunchentoot]] web server.
+
 * Introduction
 [[http://chalaev.com][www.chalaev.com]] is my old personal website which I am using to test [[https://edicl.github.io/hunchentoot][Hunchentoot]].
-This project is about /server/ (back end) code; the [[file:chalaev.com/][front end code]] serves mostly for demonstration purposes.
+This project is about /server/ (back end) code; the [[file:srv/www/chalaev.com][front end code]] serves mostly for demonstration purposes.
 
-The following /server/ features work:
-- serve static files on GET request,
+The following /server/ features are used in [[http://chalaev.com][www.chalaev.com]]:
+- serve static files and generated pages on GET request,
 - basic authentication,
 - customized error pages (e.g. =404.html=),
-- serves =index.html= when asked for =/=, and =file.html= when asked for =file= (requires [[file:hunchentoot/][hunchentoot update]]).
+- serves =index.html= when asked for =/=, and =file.html= when asked for =file= (requires [[file:hunchentoot/hunchentoot.org][hunchentoot update]]).
 
 * Requirements
-Usual =linux= environment, =sbcl=, =quicklisp=, =emacs=, and [[https://github.com/chalaev/lisp-goodies/raw/master/packaged/cl-shalaev.tbz][lisp goodies]] unpacked into your local =quicklisp= repository.
+Usual =linux= environment, =sbcl=, =quicklisp=, =emacs=.
 
-* Hosting
-The website is hosted on a (US-based) VPS server for \$2/month;
-for this price one enjoys 512Mb of RAM and 10Gb of disk space
-which might be enough for small business usage if system resources are used carefully.
+Two =sbcl= packages unavailable in =quicklisp=: [[https://github.com/chalaev/cl-simple-logger/blob/master/packaged/simple-log.tbz][cl-simple-logger]] and [[https://github.com/chalaev/lisp-goodies/raw/master/packaged/cl-shalaev.tbz][lisp goodies]], unpacked into your local =quicklisp= repository:
+#+BEGIN_SRC shell
+tar xjf cl-shalaev.tbz --directory=$HOME/quicklisp/local-projects/
+tar xjf simple-log.tbz --directory=$HOME/quicklisp/local-projects/
+#+END_SRC
+where it is assimed that your =quicklisp= is installed in =~/quicklisp/=.
 
 * Compiling (or not?)
 Compiling is unnecessary: we could just launch =sbcl= on the server and evaluate
@@ -26,20 +30,35 @@ Compiling is unnecessary: we could just launch =sbcl= on the server and evaluate
 (ql:quickload :web-server)
 (web-server:start t)
 #+END_SRC
+
 However, I prefer to compile because compilation
 - makes the code faster,
 - saves valuable system resources on the server: e.g., we do not need to install =sbcl= there, and
 - makes it more difficult for +Forces of Darkness+ system administrators to analyze back end code on the server.
 
+[[http://chalaev.com][www.chalaev.com]] is hosted on a (US-based) VPS server for $2/month;
+for this price one enjoys 512Mb of RAM and 10Gb of disk space
+which might be enough for small business usage if system resources are used carefully.
+
 =make= compiles the code to a 16Mb binary file which is copied to the server and launched there.
+([[https://github.com/chalaev/cl-simple-logger][Manual SBCL compilation]] with =--with-sb-core-compression= is required to shrink the binary size.)
 
 You probably have to update [[file:Makefile][Makefile]] configuration
 (specifying where your =sbcl= and =quicklisp= are installed)
 to make it work on your system.
 
+* Starting the server
+Apart from code from this project we also need
+1. [[https://duckduckgo.com/?t=ffsb&q=certbot&ia=web][certbot]] to obtain our SSL-certificates, and 
+2. [[https://nginx.org/en/][nginx]] as a proxy.
+
+Configuring =certbot= and =nginx= is discussed elsewhere;
+The specific configuration file responsible for [[http://chalaev.com][www.chalaev.com]] 
+resides in [[file:generated/chalaev-com.nginx][/etc/nginx/sites-enabled/chalaev.com]]
+
 * Debugging
 [[https://quickref.common-lisp.net/swank.html][Swank]] allows to connect to the (remote) code and update it (or change variables' values) without actually restarting the server.
-Since we do not want to open 4005th port on the server, let me tunnel it to the 4015th one on my local host:
+Since we do not want to open 4005th port on the server, let us tunnel it to the 4015th one on the local host:
 #+BEGIN_SRC shell
 ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -L 4015:localhost:4005 -fN chalaev.com
 ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -O check chalaev.com

@@ -1,47 +1,46 @@
 
 # Table of Contents
 
-1.  [Introduction](#org0781387)
-2.  [Requirements](#org37c9756)
-3.  [Hosting](#org754b3c5)
-4.  [Compiling (or not?)](#org439ba27)
-5.  [Debugging](#orga489bc6)
-6.  [License](#org65b6660)
+1.  [Introduction](#org6d0a7c7)
+2.  [Requirements](#orgd57344d)
+3.  [Compiling (or not?)](#org3a59ff2)
+4.  [Starting the server](#orgdec8e13)
+5.  [Debugging](#org6ade71e)
+6.  [License](#org78c3e3e)
+
+An example or template by those who want to host their websites on [Hunchentoot](https://edicl.github.io/hunchentoot) web server.
 
 
-
-<a id="org0781387"></a>
+<a id="org6d0a7c7"></a>
 
 # Introduction
 
 [www.chalaev.com](http://chalaev.com) is my old personal website which I am using to test [Hunchentoot](https://edicl.github.io/hunchentoot).
-This project is about *server* (back end) code; the [front end code](chalaev.com/) serves mostly for demonstration purposes.
+This project is about *server* (back end) code; the [front end code](srv/www/chalaev.com) serves mostly for demonstration purposes.
 
-The following *server* features work:
+The following *server* features are used in [www.chalaev.com](http://chalaev.com):
 
--   serve static files on GET request,
+-   serve static files and generated pages on GET request,
 -   basic authentication,
 -   customized error pages (e.g. `404.html`),
--   serves `index.html` when asked for `/`, and `file.html` when asked for `file` (requires [hunchentoot update](hunchentoot/)).
+-   serves `index.html` when asked for `/`, and `file.html` when asked for `file` (requires [hunchentoot update](hunchentoot/hunchentoot.org)).
 
 
-<a id="org37c9756"></a>
+<a id="orgd57344d"></a>
 
 # Requirements
 
-Usual `linux` environment, `sbcl`, `quicklisp`, `emacs`, and [lisp goodies](https://github.com/chalaev/lisp-goodies/raw/master/packaged/cl-shalaev.tbz) unpacked into your local `quicklisp` repository.
+Usual `linux` environment, `sbcl`, `quicklisp`, `emacs`.
+
+Two `sbcl` packages unavailable in `quicklisp`: [cl-simple-logger](https://github.com/chalaev/cl-simple-logger/blob/master/packaged/simple-log.tbz) and [lisp goodies](https://github.com/chalaev/lisp-goodies/raw/master/packaged/cl-shalaev.tbz), unpacked into your local `quicklisp` repository:
+
+    tar xjf cl-shalaev.tbz --directory=$HOME/quicklisp/local-projects/
+    tar xjf simple-log.tbz --directory=$HOME/quicklisp/local-projects/
+
+where it is assimed that your `quicklisp` is installed in `~/quicklisp/`.
 
 
-<a id="org754b3c5"></a>
-
-# Hosting
-
-The website is hosted on a (US-based) VPS server for \\$2/month;
-for this price one enjoys 512Mb of RAM and 10Gb of disk space
-which might be enough for small business usage if system resources are used carefully.
-
-
-<a id="org439ba27"></a>
+<a id="org3a59ff2"></a>
 
 # Compiling (or not?)
 
@@ -56,19 +55,38 @@ However, I prefer to compile because compilation
 -   saves valuable system resources on the server: e.g., we do not need to install `sbcl` there, and
 -   makes it more difficult for <del>Forces of Darkness</del> system administrators to analyze back end code on the server.
 
+[www.chalaev.com](http://chalaev.com) is hosted on a (US-based) VPS server for $2/month;
+for this price one enjoys 512Mb of RAM and 10Gb of disk space
+which might be enough for small business usage if system resources are used carefully.
+
 `make` compiles the code to a 16Mb binary file which is copied to the server and launched there.
+([Manual SBCL compilation](https://github.com/chalaev/cl-simple-logger) with `--with-sb-core-compression` is required to shrink the binary size.)
 
 You probably have to update [Makefile](Makefile) configuration
 (specifying where your `sbcl` and `quicklisp` are installed)
 to make it work on your system.
 
 
-<a id="orga489bc6"></a>
+<a id="orgdec8e13"></a>
+
+# Starting the server
+
+Apart from code from this project we also need
+
+1.  [certbot](https://duckduckgo.com/?t=ffsb&q=certbot&ia=web) to obtain our SSL-certificates, and
+2.  [nginx](https://nginx.org/en/) as a proxy.
+
+Configuring `certbot` and `nginx` is discussed elsewhere;
+The specific configuration file responsible for [www.chalaev.com](http://chalaev.com) 
+resides in [/etc/nginx/sites-enabled/chalaev.com](generated/chalaev-com.nginx)
+
+
+<a id="org6ade71e"></a>
 
 # Debugging
 
 [Swank](https://quickref.common-lisp.net/swank.html) allows to connect to the (remote) code and update it (or change variables' values) without actually restarting the server.
-Since we do not want to open 4005th port on the server, let me tunnel it to the 4015th one on my local host:
+Since we do not want to open 4005th port on the server, let us tunnel it to the 4015th one on the local host:
 
     ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -L 4015:localhost:4005 -fN chalaev.com
     ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -O check chalaev.com
@@ -85,7 +103,7 @@ After that, we just use [slime](https://common-lisp.net/project/slime/) for debu
 but feeling almost like [debugging the Deep Space 1 spacecraft](https://lispcookbook.github.io/cl-cookbook/debugging.html) ☺.
 
 
-<a id="org65b6660"></a>
+<a id="org78c3e3e"></a>
 
 # License
 

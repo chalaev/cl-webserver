@@ -1,0 +1,13 @@
+#+TITLE: change log
+#+AUTHOR: Oleg Shalaev
+#+EMAIL:  oleg@chalaev.com
+
+* Intensive development
+Implementing new ideas/features, the code changes significantly.
+
+** 2021-01-25 
+First commit. Ensuring that all files are included.
+
+*** 01/26
+1. updated [[file:README.md][README.org]] adding new section: "Starting the server".
+2. included [[file:generated/chalaev-com.nginx][/etc/nginx/sites-enabled/chalaev.com]]

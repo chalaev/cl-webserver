@@ -1,12 +1,20 @@
-My updates to =hunchentoot=.
+#+TITLE: My updates to hunchentoot.
+
+I hope that one day =hunchentoot= becomes independent of =nginx=;
+this is why for some features it makes sense updating 
+=hunchentoot= code instead of changing =nginx= configuration files.
 
 * misc.lisp
+The following patch  serves =index.html= when asked for =/=, and =file.html= when asked for =file=.
 
+** patch
+One way to update the code is to [[file:misc.diff][patch it]]:
 #+BEGIN_SRC shell
 patch /your-QL-directory/dists/quicklisp/software/hunchentoot-v1.3.0/misc.lisp misc.diff
 #+END_SRC
 
-
+** handle-static-file
+Instead of patching, we could just replace ~handle-static-file~ with the following:
 #+BEGIN_SRC lisp :tangle generated/misc.lisp
 (defun handle-static-file (PN &optional content-type callback)
 (let((index.html (merge-pathnames PN (make-pathname :name "index" :type "html"))))
@@ -44,7 +52,3 @@ patch /your-QL-directory/dists/quicklisp/software/hunchentoot-v1.3.0/misc.lisp m
           (decf bytes-to-send chunk-size)))
       (finish-output out))))))))
 #+END_SRC
-
-* Accept-Encoding gzip
-Another update: it should search request headers for =Accept-Encoding gzip= 
-and, if found and gzipped file exists, send it.
