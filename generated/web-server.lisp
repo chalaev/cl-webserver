@@ -12,12 +12,11 @@
   (apply #'SL:log (cons LT (cons (concatenate 'string "WS " format-string) format-arguments)))))
 
 (defvar *dispatchers* '())
-(defclass vhost (tbnl:acceptor)
-()
+(defclass vhost (tbnl:acceptor) ()
 (:default-initargs
   :address "127.0.0.1"
-  :document-root #p"/srv/www/chalaev.com/"
-  :error-template-directory #p"/srv/www/chalaev.com/errors/"))
+  :document-root (make-pathname :directory '(:absolute "srv" "www" "chalaev.com"))
+  :error-template-directory (make-pathname :directory '(:absolute "srv" "www" "chalaev.com" "errors"))))
 
 (defmethod dispatch-table((acceptor vhost))
   (append *dispatchers* (web-server/files:dispatchers)))
@@ -53,15 +52,19 @@
   (tbnl:stop virtual-host)
   (bt:condition-notify stop-the-server))
 (defun start(&optional interactive)
+(setf swank:*use-dedicated-output-stream* nil)
+;;(swank:create-server :dont-close t :port 4210 :coding-system 'ascii); coding-system is unknown on linux stretch
+(swank:create-server :dont-close t :port 4210)
+
+(declaim (optimize (debug 3))); necessary for debugging
 (setf virtual-host (make-instance 'vhost :port 50001))
 (unless *dispatchers*
   (push (tbnl:create-regex-dispatcher "^/status$" 'status) *dispatchers*))
-  (web-server/files:start)
-  (tbnl:start virtual-host)
-  (swank:create-server)
+(web-server/files:start)
+(tbnl:start virtual-host)
 
 (unless interactive
-(let((SL-lock (bt:make-lock)))
+(let((SL-lock(bt:make-lock)))
   (bt:with-lock-held(SL-lock)
      (sb-thread:condition-wait stop-the-server SL-lock)))))
 

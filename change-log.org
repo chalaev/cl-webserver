@@ -8,6 +8,15 @@ Implementing new ideas/features, the code changes significantly.
 ** 2021-01-25 
 First commit. Ensuring that all files are included.
 
+*** 06/02
+1. replaced =(swank:create-server)= → =(swank:create-server :dont-close t)=
+2. resolved such a strange problem: swank server allowed only first connection: if I =M-x slime-disconnect=, I could not reconnect any more.
+   [The issue might have been resolved by =(setf swank:*use-dedicated-output-stream* nil)=.]
+
+*** 02/17
+1. abrupt version change due to updated [[file:helpers/derive-version.el][derive-version.el]]
+2. removed  =helpers/derive-version.el=
+
 *** 01/26
 1. updated [[file:README.md][README.org]] adding new section: "Starting the server".
 2. included [[file:generated/chalaev-com.nginx][/etc/nginx/sites-enabled/chalaev.com]]

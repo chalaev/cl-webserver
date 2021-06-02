@@ -44,17 +44,16 @@ I could probably replace ~tbnl:acceptor~ with ~tbnl:ssl-acceptor~ as follows:
   :document-root #p"/srv/www/chalaev.com/"
   :error-template-directory #p"/srv/www/chalaev.com/errors/"))
 #+END_SRC
-← but then =chalaev.com= would be the only website that this acceptor could host, and
-I find this limitation unnecessary.
+← but then =chalaev.com= would be the only website that this acceptor could host, and I find this limitation unnecessary.
 
+#+END_SRC
 #+BEGIN_SRC lisp :tangle generated/web-server.lisp
 (defvar *dispatchers* '())
-(defclass vhost (tbnl:acceptor)
-()
+(defclass vhost (tbnl:acceptor) ()
 (:default-initargs
   :address "127.0.0.1"
-  :document-root #p"/srv/www/chalaev.com/"
-  :error-template-directory #p"/srv/www/chalaev.com/errors/"))
+  :document-root (make-pathname :directory '(:absolute "srv" "www" "chalaev.com"))
+  :error-template-directory (make-pathname :directory '(:absolute "srv" "www" "chalaev.com" "errors"))))
 #+END_SRC
 
 #+BEGIN_SRC lisp :tangle generated/web-server.lisp
@@ -109,7 +108,7 @@ I had to slightly change several last lines of the default =acceptor-status-mess
   (file-contents file-stream)))))))
 #+END_SRC
 
-We have only one IP address an thus only one acceptor =virtual-host=:
+We have only one IP address and one port; hence we need only one acceptor =virtual-host=:
 #+BEGIN_SRC lisp :tangle generated/web-server.lisp
 (defvar virtual-host nil)
 (defvar stop-the-server (bt:make-condition-variable))
@@ -117,19 +116,25 @@ We have only one IP address an thus only one acceptor =virtual-host=:
   (tbnl:stop virtual-host)
   (bt:condition-notify stop-the-server))
 (defun start(&optional interactive)
+(setf swank:*use-dedicated-output-stream* nil)
+;;(swank:create-server :dont-close t :port 4210 :coding-system 'ascii); coding-system is unknown on linux stretch
+(swank:create-server :dont-close t :port 4210)
+#+END_SRC
+← где =:dont-close t= означает, что разрешается больше, чем одно соединение с сервером.
+#+BEGIN_SRC lisp :tangle generated/web-server.lisp
+(declaim (optimize (debug 3))); necessary for debugging
 (setf virtual-host (make-instance 'vhost :port 50001))
 (unless *dispatchers*
   (push (tbnl:create-regex-dispatcher "^/status$" 'status) *dispatchers*))
-  (web-server/files:start)
-  (tbnl:start virtual-host)
-  (swank:create-server)
+(web-server/files:start)
+(tbnl:start virtual-host)
 #+END_SRC
 ← allows us to see/control in =emacs= [[Debugging][what's going on with the server]].
 
 Now let us create an endless loop
 #+BEGIN_SRC lisp :tangle generated/web-server.lisp
 (unless interactive
-(let((SL-lock (bt:make-lock)))
+(let((SL-lock(bt:make-lock)))
   (bt:with-lock-held(SL-lock)
      (sb-thread:condition-wait stop-the-server SL-lock)))))
 #+END_SRC
@@ -168,7 +173,7 @@ localhost
 #+END_SRC
 Here is a real-life error that I have fixed "on the fly" using this approach.
 Initially my =web-server:stop= contained a mistake
-#+BEGIN_SRC 
+#+BEGIN_SRC lisp
 (defun stop()
   (stop virtual-host)
   (bt:condition-notify stop-the-server))

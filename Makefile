@@ -1,8 +1,7 @@
 SBCL = ~/local/bin/sbcl
 # SBCL = /usr/bin/sbcl --core /usr/lib/sbcl/sbcl.core
 
-quicklispDir = $$HOME/quicklisp/local-projects/web-server
-stretchQL = $$HOME/ql.stretch/local-projects/web-server
+quicklispDir = $$HOME/quicklisp/local-projects/chalaev.com
 # ← for (binary) compilation in chroot-ed environment;
 
 headersDir = generated/headers
@@ -15,13 +14,12 @@ OFNs = web-server packaging websites
 ORGs = $(addsuffix .org, $(OFNs))
 
 all: quicklisp README.md $(addprefix generated/from/, $(ORGs)) $(quicklispDir)/binary
-	rsync -au $(quicklispDir)/*.org $(quicklispDir)/*.asd $(quicklispDir)/*.lisp $(stretchQL)
 
 quicklisp: $(quicklispDir)/ $(addprefix $(quicklispDir)/, $(package)) $(addprefix generated/from/, $(ORGs))
 
 $(quicklispDir)/binary: quicklisp version.org
 	@echo "*** COMPILING THE BINARY ***"
-	$(SBCL) --quit --eval "(asdf:make :web-server)"
+	$(SBCL) --quit --eval "(progn (require :swank) (asdf:make :web-server))"
 	@echo "*** COMPILED THE BINARY ***"
 	@echo "Now run it to see the log messages both in terminal and in the log file"
 
@@ -35,7 +33,7 @@ $(quicklispDir)/%.lisp: generated/from/websites.org generated/from/packaging.org
 	-@chgrp tmp $@
 
 generated/from/%.org: %.org generated/from/ generated/headers/
-	echo `emacsclient -e '(printangle "$<")'` | sed 's/"//g' > $@
+	echo `emacsclient -e "(progn (require 'version) (printangle \"$<\"))"` | sed 's/"//g' > $@
 	-@chgrp tmp $@ `cat $@`
 	-@chmod a-x `cat $@`
 
@@ -54,10 +52,10 @@ clean:
 %/:
 	[ -d $@ ] || mkdir -p $@
 
-version.org: change-log.org helpers/derive-version.el
-	emacsclient -e '(progn (load "$(CURDIR)/helpers/derive-version.el") (format-version "$<"))' | sed 's/"//g' > $@
+version.org: change-log.org
+	emacsclient -e "(progn (require 'version) (format-version \"$<\"))" | sed 's/"//g' > $@
 	echo "← generated `date '+%m/%d %H:%M'` from [[file:$<][$<]]" >> $@
-	echo "by [[file:helpers/derive-version.el][derive-version.el]]" >> $@
+	echo "by [[https://github.com/chalaev/lisp-goodies/blob/master/packaged/version.el][version.el]]" >> $@
 	-@chgrp tmp $@
 
 $(quicklispDir)/%.org: %.org

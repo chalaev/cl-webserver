@@ -1,6 +1,6 @@
 #+TITLE: My updates to hunchentoot.
 
-I hope that one day =hunchentoot= becomes independent of =nginx=;
+I hope that one day I won't need  =nginx= as a proxy for =hunchentoot=;
 this is why for some features it makes sense updating 
 =hunchentoot= code instead of changing =nginx= configuration files.
 

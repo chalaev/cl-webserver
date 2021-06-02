@@ -45,7 +45,7 @@ Web server includes several websites
     :licence "MIT"
     :components ((:file "files")))
 #+END_SRC
-← needs a code for displaying a directory.
+← needs extra code for displaying directory content.
 
 #+BEGIN_SRC lisp :tangle generated/headers/files.lisp
 (defpackage :web-server/files

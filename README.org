@@ -2,7 +2,7 @@
 #+AUTHOR: Oleg Shalaev
 #+EMAIL:  oleg@chalaev.com
 
-An example or template by those who want to host their websites on [[https://edicl.github.io/hunchentoot][Hunchentoot]] web server.
+An example or template of a website powered by [[https://edicl.github.io/hunchentoot][Hunchentoot]] web server.
 
 * Introduction
 [[http://chalaev.com][www.chalaev.com]] is my old personal website which I am using to test [[https://edicl.github.io/hunchentoot][Hunchentoot]].
@@ -11,8 +11,8 @@ This project is about /server/ (back end) code; the [[file:srv/www/chalaev.com][
 The following /server/ features are used in [[http://chalaev.com][www.chalaev.com]]:
 - serve static files and generated pages on GET request,
 - basic authentication,
-- customized error pages (e.g. =404.html=),
-- serves =index.html= when asked for =/=, and =file.html= when asked for =file= (requires [[file:hunchentoot/hunchentoot.org][hunchentoot update]]).
+- customized error pages (e.g. [[file:srv/www/chalaev.com/errors/404.html][404.html]]),
+- serves =index.html= when asked for =/=, and =page.html= when asked for =page= (requires [[file:hunchentoot/hunchentoot.org][hunchentoot update]]).
 
 * Requirements
 Usual =linux= environment, =sbcl=, =quicklisp=, =emacs=.
@@ -22,7 +22,7 @@ Two =sbcl= packages unavailable in =quicklisp=: [[https://github.com/chalaev/cl-
 tar xjf cl-shalaev.tbz --directory=$HOME/quicklisp/local-projects/
 tar xjf simple-log.tbz --directory=$HOME/quicklisp/local-projects/
 #+END_SRC
-where it is assimed that your =quicklisp= is installed in =~/quicklisp/=.
+where it is assumed that your =quicklisp= is installed in =~/quicklisp/=.
 
 * Compiling (or not?)
 Compiling is unnecessary: we could just launch =sbcl= on the server and evaluate

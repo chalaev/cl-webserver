@@ -1,17 +1,17 @@
 
 # Table of Contents
 
-1.  [Introduction](#org6d0a7c7)
-2.  [Requirements](#orgd57344d)
-3.  [Compiling (or not?)](#org3a59ff2)
-4.  [Starting the server](#orgdec8e13)
-5.  [Debugging](#org6ade71e)
-6.  [License](#org78c3e3e)
+1.  [Introduction](#org70ae3f5)
+2.  [Requirements](#orgec8c3f9)
+3.  [Compiling (or not?)](#org134f222)
+4.  [Starting the server](#org7ba3cc3)
+5.  [Debugging](#org83afc92)
+6.  [License](#org4ee127b)
 
-An example or template by those who want to host their websites on [Hunchentoot](https://edicl.github.io/hunchentoot) web server.
+An example or template of a website powered by [Hunchentoot](https://edicl.github.io/hunchentoot) web server.
 
 
-<a id="org6d0a7c7"></a>
+<a id="org70ae3f5"></a>
 
 # Introduction
 
@@ -22,11 +22,11 @@ The following *server* features are used in [www.chalaev.com](http://chalaev.com
 
 -   serve static files and generated pages on GET request,
 -   basic authentication,
--   customized error pages (e.g. `404.html`),
--   serves `index.html` when asked for `/`, and `file.html` when asked for `file` (requires [hunchentoot update](hunchentoot/hunchentoot.org)).
+-   customized error pages (e.g. [404.html](srv/www/chalaev.com/errors/404.html)),
+-   serves `index.html` when asked for `/`, and `page.html` when asked for `page` (requires [hunchentoot update](hunchentoot/hunchentoot.org)).
 
 
-<a id="orgd57344d"></a>
+<a id="orgec8c3f9"></a>
 
 # Requirements
 
@@ -37,10 +37,10 @@ Two `sbcl` packages unavailable in `quicklisp`: [cl-simple-logger](https://githu
     tar xjf cl-shalaev.tbz --directory=$HOME/quicklisp/local-projects/
     tar xjf simple-log.tbz --directory=$HOME/quicklisp/local-projects/
 
-where it is assimed that your `quicklisp` is installed in `~/quicklisp/`.
+where it is assumed that your `quicklisp` is installed in `~/quicklisp/`.
 
 
-<a id="org3a59ff2"></a>
+<a id="org134f222"></a>
 
 # Compiling (or not?)
 
@@ -67,7 +67,7 @@ You probably have to update [Makefile](Makefile) configuration
 to make it work on your system.
 
 
-<a id="orgdec8e13"></a>
+<a id="org7ba3cc3"></a>
 
 # Starting the server
 
@@ -81,7 +81,7 @@ The specific configuration file responsible for [www.chalaev.com](http://chalaev
 resides in [/etc/nginx/sites-enabled/chalaev.com](generated/chalaev-com.nginx)
 
 
-<a id="org6ade71e"></a>
+<a id="org83afc92"></a>
 
 # Debugging
 
@@ -103,7 +103,7 @@ After that, we just use [slime](https://common-lisp.net/project/slime/) for debu
 but feeling almost like [debugging the Deep Space 1 spacecraft](https://lispcookbook.github.io/cl-cookbook/debugging.html) ☺.
 
 
-<a id="org78c3e3e"></a>
+<a id="org4ee127b"></a>
 
 # License
 
