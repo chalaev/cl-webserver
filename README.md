@@ -1,17 +1,25 @@
-
-# Table of Contents
-
-1.  [Introduction](#org70ae3f5)
-2.  [Requirements](#orgec8c3f9)
-3.  [Compiling (or not?)](#org134f222)
-4.  [Starting the server](#org7ba3cc3)
-5.  [Debugging](#org83afc92)
-6.  [License](#org4ee127b)
-
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org7a668d6">1. Introduction</a></li>
+<li><a href="#org2cf6e29">2. Requirements</a></li>
+<li><a href="#org6a29bc1">3. Compiling (or not?)</a></li>
+<li><a href="#org5e1f79a">4. Starting the server</a></li>
+<li><a href="#org4308fd6">5. Debugging</a></li>
+<li><a href="#org8a7dc51">6. License</a></li>
+</ul>
+</div>
+</div>
 An example or template of a website powered by [Hunchentoot](https://edicl.github.io/hunchentoot) web server.
+It **was** used for [www.chalaev.com](http://chalaev.com) in the past, but as of 2022 
+[www.chalaev.com](http://chalaev.com) is powered by the [website builder](http://builder.leanws.com).
+
+This project was my first step to understand how one can use Common Lisp to run a real-life web server.
+My (closed-source) [website builder](http://builder.leanws.com) grew out of this code.
 
 
-<a id="org70ae3f5"></a>
+<a id="org7a668d6"></a>
 
 # Introduction
 
@@ -26,7 +34,7 @@ The following *server* features are used in [www.chalaev.com](http://chalaev.com
 -   serves `index.html` when asked for `/`, and `page.html` when asked for `page` (requires [hunchentoot update](hunchentoot/hunchentoot.org)).
 
 
-<a id="orgec8c3f9"></a>
+<a id="org2cf6e29"></a>
 
 # Requirements
 
@@ -40,7 +48,7 @@ Two `sbcl` packages unavailable in `quicklisp`: [cl-simple-logger](https://githu
 where it is assumed that your `quicklisp` is installed in `~/quicklisp/`.
 
 
-<a id="org134f222"></a>
+<a id="org6a29bc1"></a>
 
 # Compiling (or not?)
 
@@ -67,7 +75,7 @@ You probably have to update [Makefile](Makefile) configuration
 to make it work on your system.
 
 
-<a id="org7ba3cc3"></a>
+<a id="org5e1f79a"></a>
 
 # Starting the server
 
@@ -81,14 +89,14 @@ The specific configuration file responsible for [www.chalaev.com](http://chalaev
 resides in [/etc/nginx/sites-enabled/chalaev.com](generated/chalaev-com.nginx)
 
 
-<a id="org83afc92"></a>
+<a id="org4308fd6"></a>
 
 # Debugging
 
 [Swank](https://quickref.common-lisp.net/swank.html) allows to connect to the (remote) code and update it (or change variables' values) without actually restarting the server.
-Since we do not want to open 4005th port on the server, let us tunnel it to the 4015th one on the local host:
+Since we do not want to open 4210th port on the server, let us tunnel it to the 4015th one on the local host:
 
-    ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -L 4015:localhost:4005 -fN chalaev.com
+    ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -L 4015:localhost:4210 -fN chalaev.com
     ssh -o ControlMaster=auto -o ControlPath=/tmp/chalaev.%C -O check chalaev.com
 
 (You might want to update your [~/.ssh/config](https://github.com/chalaev/cloud/blob/master/cloud.org) file to improve connection reliability.)
@@ -103,7 +111,7 @@ After that, we just use [slime](https://common-lisp.net/project/slime/) for debu
 but feeling almost like [debugging the Deep Space 1 spacecraft](https://lispcookbook.github.io/cl-cookbook/debugging.html) ☺.
 
 
-<a id="org4ee127b"></a>
+<a id="org8a7dc51"></a>
 
 # License
 
