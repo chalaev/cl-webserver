@@ -11,6 +11,7 @@
 </ul>
 </div>
 </div>
+
 An example or template of a website powered by [Hunchentoot](https://edicl.github.io/hunchentoot) web server.
 It was used for [www.chalaev.com](http://chalaev.com) in the past, but as of 2022 
 [www.chalaev.com](http://chalaev.com) is powered by the [website builder](http://builder.leanws.com).
