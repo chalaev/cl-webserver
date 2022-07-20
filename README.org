@@ -2,7 +2,7 @@
 #+AUTHOR: Oleg Shalaev
 #+EMAIL:  oleg@chalaev.com
 
-An example or template of a website powered by [[https://edicl.github.io/hunchentoot][Hunchentoot]] web server.
+This is an example or template of a website powered by [[https://edicl.github.io/hunchentoot][Hunchentoot]] web server.
 It *was* used for [[http://chalaev.com][www.chalaev.com]] in the past, but as of 2022 
 [[http://chalaev.com][www.chalaev.com]] is powered by the [[http://builder.leanws.com][website builder]].
 
